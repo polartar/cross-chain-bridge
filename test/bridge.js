@@ -6,7 +6,6 @@ describe("Contract bridge testing", async function () {
     this.network = await ethers.provider.getNetwork();
     this.chainIdBSC = 97;
     this.testAmount = 1e9;
-    this.zeroAddress = "0x0000000000000000000000000000000000000000";
     [
       this.ownerETH,
       this.ownerBSC,
@@ -91,7 +90,7 @@ describe("Contract bridge testing", async function () {
       this.instanceBridgeETH
         .connect(this.acc)
         .swap(
-          this.zeroAddress,
+          ethers.constants.AddressZero,
           this.instanceBSCToken.address,
           this.testAmount,
           this.chainIdBSC
@@ -104,7 +103,7 @@ describe("Contract bridge testing", async function () {
         .connect(this.acc)
         .swap(
           this.instanceETHToken.address,
-          this.zeroAddress,
+          ethers.constants.AddressZero,
           this.testAmount,
           this.chainIdBSC
         )
