@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./FuseBlock.sol";
 
+
 contract Stake is Ownable {
     struct TokenInfo {
         uint256 tokenId;
@@ -16,11 +17,19 @@ contract Stake is Ownable {
     mapping(address => uint256[]) tokenIds;
     address fuseBlockAddress;
     address auraAddress;
-    uint256 rewardInterval = 1 days;
+    uint256 rewardInterval = 1 hours;
 
     constructor (address _fuseBlockAddress, address _auraAddress)  {
         fuseBlockAddress = _fuseBlockAddress;
         auraAddress = _auraAddress;
+    }
+
+    function updateRewardsInterval(uint256 _interval) external onlyOwner {
+        rewardInterval = _interval;
+    }
+
+    function getStakedIds(address _staker) external view returns(uint256[] memory) {
+        return tokenIds[_staker];
     }
 
     function stake(uint256 _tokenId) external {
@@ -70,7 +79,7 @@ contract Stake is Ownable {
         for(uint256 i = 0; i < len; i ++) {
             token = users[msg.sender][_tokenIds[i]];
             auraAmount = FuseBlock(fuseBlockAddress).getAuraAmount(_tokenIds[i]);
-            rewards += auraAmount * (block.timestamp - token.stakedAt) / rewardInterval;
+            rewards += auraAmount * ((block.timestamp - token.stakedAt) / rewardInterval);
         }
 
         return rewards;
