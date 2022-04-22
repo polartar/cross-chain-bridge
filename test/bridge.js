@@ -4,6 +4,7 @@ const { expect }  = require("chai");
 describe("Contract bridge testing", async function () {
   before(async function () {
     this.network = await ethers.provider.getNetwork();
+
     this.chainIdBSC = 97;
     this.testAmount = 1e9;
     [

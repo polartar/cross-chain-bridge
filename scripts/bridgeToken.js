@@ -1,25 +1,25 @@
 const { ethers } = require ("hardhat");
 
 async function main() {
-  // const TokenForBridge = await ethers.getContractFactory("TokenForBridge");
-  // const tokenForBridge = await TokenForBridge.deploy(
-  //   "0xe456f9A32E5f11035ffBEa0e97D1aAFDA6e60F03"
-  // );
+  const TokenForBridge = await ethers.getContractFactory("TokenForBridge");
+  const tokenForBridge = await TokenForBridge.deploy(
+    "0xeDec18794210Ca0378354340B440C0f26B050274"
+  );
 
-  // await tokenForBridge.deployed();
+  await tokenForBridge.deployed();
 
-  // console.log(`Bridge deployed to: ${tokenForBridge.address}`);
+  console.log(`Bridge deployed to: ${tokenForBridge.address}`);
 
-  // mumbai 0xDBb6826bE6492ADC833FBd567Fa0B4b13AEB64CA
-  // ropsten 0xD99195c6753d2B016806c4Bc27b9F85961730cFF
+  // mumbai 0x32Cd1845c14F6716fc6a95Ad5755B808116F93B1
+  // ropsten 0xE335C1E3FDA54F214616095F715D470D225486b2
 
-  await hre.run("verify:verify", {
-    address: "0xDBb6826bE6492ADC833FBd567Fa0B4b13AEB64CA",
-    contract: "contracts/TokenBridge.sol:TokenForBridge",
-    constructorArguments: [
-      "0xe456f9A32E5f11035ffBEa0e97D1aAFDA6e60F03"
-    ],
-  });
+  // await hre.run("verify:verify", {
+  //   address: "0xE335C1E3FDA54F214616095F715D470D225486b2",
+  //   contract: "contracts/TokenBridge.sol:TokenForBridge",
+  //   constructorArguments: [
+  //     "0xa9A0489EAdBE81E011647ab543735E68dc2f504d"
+  //   ],
+  // });
 }
 
 main().catch((err) => {
