@@ -19,6 +19,10 @@ contract Stake is Ownable {
     address auraAddress;
     uint256 rewardInterval = 1 hours;
 
+    address royaltyReceiver;
+    uint256 royaltyFraction;
+    uint256 constant feeDenominator = 10000;
+
     constructor (address _fuseBlockAddress, address _auraAddress)  {
         fuseBlockAddress = _fuseBlockAddress;
         auraAddress = _auraAddress;
@@ -88,6 +92,17 @@ contract Stake is Ownable {
     function claimRewards() public {
         uint256 rewards = calculateRewards(msg.sender);
 
-        IERC20(auraAddress).transfer(msg.sender, rewards);
+        uint256 royaltyFee = rewards * royaltyFraction / feeDenominator;
+
+        IERC20(auraAddress).transfer(royaltyReceiver, royaltyFee);
+        IERC20(auraAddress).transfer(msg.sender, rewards - royaltyFee);
+    }
+
+    function setRoyaltyReceiver(address _receiver) external onlyOwner {
+        royaltyReceiver = _receiver;
+    }
+    
+    function setRoyaltyFeeFraction(uint256 _feeFraction) external onlyOwner {
+        royaltyFraction = _feeFraction;
     }
 }
