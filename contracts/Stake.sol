@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./FuseBlock.sol";
 
-
 contract Stake is Ownable {
     struct TokenInfo {
         uint256 tokenId;
@@ -21,7 +20,7 @@ contract Stake is Ownable {
 
     address royaltyReceiver;
     uint256 royaltyFraction;
-    uint256 constant feeDenominator = 10000;
+    uint256 constant FEE_DENOMINATOR = 10000;
 
     constructor (address _fuseBlockAddress, address _auraAddress)  {
         fuseBlockAddress = _fuseBlockAddress;
@@ -91,18 +90,26 @@ contract Stake is Ownable {
 
     function claimRewards() public {
         uint256 rewards = calculateRewards(msg.sender);
+        require(IERC20(auraAddress).balanceOf(address(this)) >= rewards, "insufficient balance");
 
-        uint256 royaltyFee = rewards * royaltyFraction / feeDenominator;
-
-        IERC20(auraAddress).transfer(royaltyReceiver, royaltyFee);
-        IERC20(auraAddress).transfer(msg.sender, rewards - royaltyFee);
+        uint256 royaltyFee;
+        if (royaltyReceiver != address(0)) {
+            royaltyFee = rewards * royaltyFraction / FEE_DENOMINATOR;
+            IERC20(auraAddress).transfer(royaltyReceiver, royaltyFee);
+            IERC20(auraAddress).transfer(msg.sender, rewards - royaltyFee);
+        } else {
+            IERC20(auraAddress).transfer(msg.sender, rewards);
+        }
     }
 
-    function setRoyaltyReceiver(address _receiver) external onlyOwner {
+    function setRoyalyInfo(address _receiver, uint256 _feeFraction) external onlyOwner {
+        require(_feeFraction > 0 && _feeFraction < 10000, "invalid fee fraction");
+        require(_receiver != address(0), "invalid address");
         royaltyReceiver = _receiver;
-    }
-    
-    function setRoyaltyFeeFraction(uint256 _feeFraction) external onlyOwner {
         royaltyFraction = _feeFraction;
+    }
+
+    function getRoyaltyInfo() external view returns(address, uint256) {
+        return (royaltyReceiver, royaltyFraction);
     }
 }

@@ -18,6 +18,7 @@ contract FuseBlock is ERC721, Ownable {
     constructor (address _auraAddress) ERC721 ("Infuse NFT", "NFT") {
         auraAddress = _auraAddress;
         _tokenIdCounter.increment();
+        minAuraAmount = 2 ether;
     }
 
     function setMinAuraAmount(uint256 _minAuraAmount) external onlyOwner {
@@ -26,7 +27,7 @@ contract FuseBlock is ERC721, Ownable {
 
     function mint(uint256 _amount) public {
         require(_amount > 0, "invalid amount");
-        require(_amount >= minAuraAmount, "should include minium aura");
+        require(_amount >= minAuraAmount, "should include minimum aura");
 
         uint256 tokenId = _tokenIdCounter.current();
         IERC20(auraAddress).transferFrom(msg.sender, address(this), _amount);

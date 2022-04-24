@@ -42,11 +42,23 @@ describe("FuseBlock", function () {
     
     expect(await fuseBlock.ownerOf(1)).to.be.equal(stake.address);
   });
+
   it("Should claim rewards", async function () {
     await stake.stake(1);
     
-    await ethers.provider.send("evm_increaseTime", [3600 * 24 * 2]);
+    await ethers.provider.send("evm_increaseTime", [3600 * 2]);
     await ethers.provider.send("evm_mine"); 
     await expect(() => stake.claimRewards()).to.changeTokenBalance(mockAura, admin, parseEther("200"));
+  });
+
+  it("Should set the royalty", async function () {
+    await stake.stake(1);
+    await expect(stake.setRoyalyInfo(user.address, 0)).to.be.revertedWith("invalid fee fraction");
+    await expect(stake.setRoyalyInfo(user.address, 10000)).to.be.revertedWith("invalid fee fraction");
+    await stake.setRoyalyInfo(user.address, 100);
+    
+    await ethers.provider.send("evm_increaseTime", [3600 * 2]);
+    await ethers.provider.send("evm_mine"); 
+    await expect(() => stake.claimRewards()).to.changeTokenBalance(mockAura, user, parseEther("2"));
   });
 });

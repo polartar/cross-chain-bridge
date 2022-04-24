@@ -27,10 +27,22 @@ describe("FuseBlock", function () {
   it("Should Mint NFT", async function () {
    await expect(() => fuseBlock.mint(parseEther("100"))).to.changeTokenBalance(mockAura, fuseBlock, parseEther("100"));
 
-  expect(await fuseBlock.ownerOf(1)).to.be.equal(admin.address);
+   expect(await fuseBlock.ownerOf(1)).to.be.equal(admin.address);
    const amount = await fuseBlock.getAuraAmount(1);
    expect(amount).to.be.equal(parseEther("100"));
   });
+
+  it("Should have minimum Aura amount", async function () {
+     await expect(fuseBlock.mint(parseEther("1"))).to.be.revertedWith("should include minimum aura");
+   });
+  
+   it("Should only admin set the minimum Aura amount", async function () {
+     await expect(fuseBlock.connect(user).setMinAuraAmount(parseEther("10"))).to.be.revertedWith("Ownable: caller is not the owner");
+     await fuseBlock.setMinAuraAmount(parseEther("10"));
+
+     await expect(fuseBlock.mint(parseEther("9"))).to.be.revertedWith("should include minimum aura");
+     await fuseBlock.mint(parseEther("10"));
+   });
 
   it("Should Burn NFT", async function () {
     await fuseBlock.mint(parseEther("100"));
