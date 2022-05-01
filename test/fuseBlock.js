@@ -77,4 +77,19 @@ describe("FuseBlock", function () {
     const tokenURI = await fuseBlock.tokenURI(1);
     expect(tokenURI).to.be.equal(`ipfs://testURI/1.json`);
   });
+
+  it("Should set the rate", async function () {
+    await expect(fuseBlock.setRate(101)).to.be.revertedWith("rate should be within 1-100");
+    await expect(fuseBlock.setRate(0)).to.be.revertedWith("rate should be within 1-100");
+
+    await fuseBlock.setRate(50);  // set the $karma:$aura = 1: 0.5;
+
+    await fuseBlock.mint(parseEther("100"));
+    const amount = await fuseBlock.getAuraAmount(1);
+    expect(amount).to.be.equal(parseEther("100"));
+
+    await fuseBlock.setRealAuraAddress(mockAura.address);
+    const realamount = await fuseBlock.getAuraAmount(1);
+    expect(realamount).to.be.equal(parseEther("50"));
+  });
 });

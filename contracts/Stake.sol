@@ -6,6 +6,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./FuseBlock.sol";
 
+interface IFuseBlock {
+    function getAuraAmount(uint256 _tokenId) external view returns (uint256);
+    function ownerOf(uint256 tokenId) external view returns (address owner);
+    function transferFrom(address from, address to, uint256 tokenId) external;
+}
 contract Stake is Ownable {
     struct TokenInfo {
         uint256 tokenId;
@@ -31,13 +36,29 @@ contract Stake is Ownable {
         rewardInterval = _interval;
     }
 
-    function getStakedIds(address _staker) external view returns(uint256[] memory) {
+    function getStakedIds() external view returns(uint256[] memory) {
+        return _getStakedIds(msg.sender);
+    }
+
+    function _getStakedIds(address _staker) private view returns(uint256[] memory) {
         return tokenIds[_staker];
     }
 
+    function getAuraAmount() external view returns(uint256) {
+        uint256[] memory stakedIds = _getStakedIds(msg.sender);
+        uint256 totalAmount;
+        uint256 len = stakedIds.length;
+
+        for(uint256 i = 0; i < len; i ++) {
+            totalAmount += IFuseBlock(fuseBlockAddress).getAuraAmount(stakedIds[i]);
+        }
+
+        return totalAmount;
+    }
+
     function stake(uint256 _tokenId) external {
-        require(FuseBlock(fuseBlockAddress).ownerOf(_tokenId) == msg.sender, "not owner of token");
-        FuseBlock(fuseBlockAddress).transferFrom(msg.sender, address(this), _tokenId);
+        require(IFuseBlock(fuseBlockAddress).ownerOf(_tokenId) == msg.sender, "not owner of token");
+        IFuseBlock(fuseBlockAddress).transferFrom(msg.sender, address(this), _tokenId);
 
         TokenInfo memory token;
         token.tokenId = _tokenId;
@@ -52,7 +73,7 @@ contract Stake is Ownable {
         uint256 tokenIndex = findTokenId(msg.sender, _tokenId);
         require(tokenIndex != type(uint256).max, "no exist");
         require(users[msg.sender][_tokenId].staker == msg.sender, "incorrect staker");
-        FuseBlock(fuseBlockAddress).transferFrom(address(this), msg.sender, _tokenId);
+        IFuseBlock(fuseBlockAddress).transferFrom(address(this), msg.sender, _tokenId);
         delete users[msg.sender][_tokenId];
 
         tokenIds[msg.sender][tokenIndex] = tokenIds[msg.sender][tokenIds[msg.sender].length - 1];
@@ -81,7 +102,7 @@ contract Stake is Ownable {
         
         for(uint256 i = 0; i < len; i ++) {
             token = users[msg.sender][_tokenIds[i]];
-            auraAmount = FuseBlock(fuseBlockAddress).getAuraAmount(_tokenIds[i]);
+            auraAmount = IFuseBlock(fuseBlockAddress).getAuraAmount(_tokenIds[i]);
             rewards += auraAmount * ((block.timestamp - token.stakedAt) / rewardInterval);
         }
 

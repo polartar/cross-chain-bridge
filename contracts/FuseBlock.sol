@@ -10,15 +10,24 @@ contract FuseBlock is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter public _tokenIdCounter;
 
-    address immutable auraAddress;
+    address public auraAddress;
     mapping(uint256 => uint256) auraAmounts;
     string baseURI = "ipfs://test";
     uint256 minAuraAmount;
+    uint16 rate;
+    uint16 constant public SCALE = 100;
+    bool public isRealAura;
 
     constructor (address _auraAddress) ERC721 ("Infuse NFT", "NFT") {
         auraAddress = _auraAddress;
         _tokenIdCounter.increment();
         minAuraAmount = 2 ether;
+        rate = 100;
+    }
+
+    function setRealAuraAddress(address _newAuraAddress) external onlyOwner {
+        isRealAura = true;
+        auraAddress = _newAuraAddress;
     }
 
     function setMinAuraAmount(uint256 _minAuraAmount) external onlyOwner {
@@ -36,7 +45,15 @@ contract FuseBlock is ERC721, Ownable {
         _tokenIdCounter.increment();
     }
 
+    function setRate(uint16 _rate) external onlyOwner {
+        require(_rate > 0 && _rate <= 100, "rate should be within 1-100");
+        rate = _rate;
+    }
+
     function getAuraAmount(uint256 _tokenId) external view returns (uint256) {
+        if (isRealAura) {
+            return auraAmounts[_tokenId] * rate / SCALE;
+        }
         return auraAmounts[_tokenId];
     }
 
