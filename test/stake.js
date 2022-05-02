@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { parseEther } = require("ethers/lib/utils");
 const { ethers } = require("hardhat");
 
-describe("FuseBlock", function () {
+describe("Stake", function () {
   let FuseBlock;
   let MockAura;
   let Stake;
@@ -25,16 +25,17 @@ describe("FuseBlock", function () {
     await fuseBlock.deployed();
 
     await mockAura.approve(fuseBlock.address, parseEther("1000"));
+    await mockAura.transfer(fuseBlock.address, parseEther("1000"));
     
     stake = await Stake.deploy(fuseBlock.address, mockAura.address);
     await stake.deployed();
 
-    fuseBlock.mint(parseEther("100"));
-    fuseBlock.mint(parseEther("150"));
+    await fuseBlock.mint(admin.address, parseEther("100"));
+    await fuseBlock.mint(admin.address, parseEther("150"));
 
-    fuseBlock.setApprovalForAll(stake.address, true);
-    mockAura.transfer(stake.address, parseEther("300"));
-    mockAura.approve(stake.address, parseEther("1000"));
+    await fuseBlock.setApprovalForAll(stake.address, true);
+    await mockAura.transfer(stake.address, parseEther("300"));
+    await mockAura.approve(stake.address, parseEther("1000"));
   })
 
   it("Should stake fuseBlock", async function () {

@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-
+import "hardhat/console.sol";
 contract FuseBlock is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter public _tokenIdCounter;
@@ -14,6 +14,7 @@ contract FuseBlock is ERC721, Ownable {
     mapping(uint256 => uint256) auraAmounts;
     string baseURI = "ipfs://test";
     uint256 minAuraAmount;
+    uint256 totalReleasedAmount;
     uint16 rate;
     uint16 constant public SCALE = 100;
     bool public isRealAura;
@@ -25,32 +26,43 @@ contract FuseBlock is ERC721, Ownable {
         rate = 100;
     }
 
-    function setRealAuraAddress(address _newAuraAddress) external onlyOwner {
+    function getTotalAuraAmount() public view onlyOwner returns(uint256) {
+        return _getTotalAuraAmount();
+    }
+
+    function _getTotalAuraAmount() private view returns(uint256) {
+        return IERC20(auraAddress).balanceOf(address(this));
+    }
+
+    function setRealAuraAddress(address _newAuraAddress, uint16 _rate) external onlyOwner {
+        require(_rate > 0 && _rate <= 100, "rate should be within 1-100");
+        rate = _rate;
         isRealAura = true;
         auraAddress = _newAuraAddress;
+        totalReleasedAmount = totalReleasedAmount * rate / SCALE;
     }
 
     function setMinAuraAmount(uint256 _minAuraAmount) external onlyOwner {
         minAuraAmount = _minAuraAmount;
     }
 
-    function mint(uint256 _amount) public {
-        require(_amount > 0, "invalid amount");
+    function mint(address _address, uint256 _amount) public {
         require(_amount >= minAuraAmount, "should include minimum aura");
-
+        totalReleasedAmount += _amount;
+        require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
         uint256 tokenId = _tokenIdCounter.current();
-        IERC20(auraAddress).transferFrom(msg.sender, address(this), _amount);
-        _safeMint(msg.sender, tokenId);
+        // IERC20(auraAddress).transferFrom(msg.sender, address(this), _amount);
+        _safeMint(_address, tokenId);
         auraAmounts[tokenId] = _amount;
         _tokenIdCounter.increment();
     }
 
-    function setRate(uint16 _rate) external onlyOwner {
-        require(_rate > 0 && _rate <= 100, "rate should be within 1-100");
-        rate = _rate;
-    }
+    // function setRate(uint16 _rate) external onlyOwner {
+    //     require(_rate > 0 && _rate <= 100, "rate should be within 1-100");
+    //     rate = _rate;
+    // }
 
-    function getAuraAmount(uint256 _tokenId) external view returns (uint256) {
+    function getAuraAmount(uint256 _tokenId) public view returns (uint256) {
         if (isRealAura) {
             return auraAmounts[_tokenId] * rate / SCALE;
         }
@@ -59,9 +71,11 @@ contract FuseBlock is ERC721, Ownable {
 
     function burn(uint256 _tokenId) public {
         require(msg.sender == ownerOf(_tokenId), "not owner of the token");
-        uint256 amount = auraAmounts[_tokenId];
+        uint256 amount = getAuraAmount(_tokenId);
+        require(amount <= _getTotalAuraAmount(), "not enough funds");
         
         auraAmounts[_tokenId] = 0;
+        totalReleasedAmount = totalReleasedAmount - amount;
         IERC20(auraAddress).transfer(msg.sender, amount);
         _burn(_tokenId);
     }
