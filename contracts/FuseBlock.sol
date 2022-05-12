@@ -46,7 +46,7 @@ contract FuseBlock is ERC721, Ownable {
         minAuraAmount = _minAuraAmount;
     }
 
-    function mint(address _address, uint256 _amount) public {
+    function mint(address _address, uint256 _amount) public onlyOwner{
         require(_amount >= minAuraAmount, "should include minimum aura");
         totalReleasedAmount += _amount;
         require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
