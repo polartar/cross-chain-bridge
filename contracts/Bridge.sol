@@ -34,7 +34,7 @@ contract Bridge is Ownable {
         if (chains[_chainId].tokens[_token])
             revert IncorrectAction(_token, true);
 
-        updateChainById(_chainId);
+        setChainId(_chainId);
         chains[_chainId].tokens[_token] = true;
     }
 
@@ -47,7 +47,7 @@ contract Bridge is Ownable {
         chains[_chainId].tokens[_token] = false;
     }
 
-    function updateChainById(uint256 _chainId) public onlyOwner {
+    function setChainId(uint256 _chainId) public onlyOwner {
         if (_chainId == 0) revert ZeroChainId();
 
         chains[_chainId].chainId = _chainId; // Set to zero to "delete" the blockchain
