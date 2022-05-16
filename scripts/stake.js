@@ -3,18 +3,18 @@ const hre = require("hardhat");
 async function main() {
   // We get the contract to deploy
   // const Stake = await hre.ethers.getContractFactory("Stake");
-  // const stake = await Stake.deploy("0x3579F235D13419ABD8B4784aB24282283f3AcBB0", "0xf3644a8896A51b947Dd29CD3e91aE0cbF4dC785A");
+  // const stake = await Stake.deploy("0x8D5163EaFF18136eAE74298388E0E579032603C3", "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be");
 
   // await stake.deployed();
 
-  // console.log("Stake deployed to:", stake.address); //0x5196D52815488271937d0eDaE53a3855A5615597
+  // console.log("Stake deployed to:", stake.address); //0x60215b74ce3A3BeFA7356531D84b32a6196608C0
 
   await hre.run("verify:verify", {
-    address: "0x2DB157dedd6f86c4e0FD69a06A6fDe4C5EAa4651",
+    address: "0x60215b74ce3A3BeFA7356531D84b32a6196608C0",
     contract: "contracts/Stake.sol:Stake",
     constructorArguments: [
-        "0x3579F235D13419ABD8B4784aB24282283f3AcBB0",
-        "0xf3644a8896A51b947Dd29CD3e91aE0cbF4dC785A"
+        "0x8D5163EaFF18136eAE74298388E0E579032603C3",
+        "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be"
     ]
   });
 }
