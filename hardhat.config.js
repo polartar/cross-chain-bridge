@@ -16,7 +16,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
-
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -50,11 +49,24 @@ module.exports = {
       url: "https://rpc-mumbai.maticvigil.com",
       accounts: [process.env.PRIVATE_KEY],
     },
+    avalanche : {
+      url: "https://api.avax.network/ext/bc/C/rpc"
+    },
+    fuji: {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 43113
+    },
+    local: {
+      url: "http://127.0.0.1:13725/ext/bc/2WV8THZYGropJoMjmXHGnFC9HsM1Vhj34ZA9vm1kNMFc9Vzogv/rpc",
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 99999
+    }
   },
   mocha: {
     timeout: 200000
   },
   etherscan: {
-    apiKey: process.env.POLYGON_API_KEY
+    apiKey: process.env.AVAX_API_KEY
   },
 };

@@ -69,6 +69,20 @@ contract FuseBlock is ERC721, Ownable {
         return auraAmounts[_tokenId];
     }
 
+    function getAuraAmounts(uint256[] calldata _tokenIds) public view returns(uint256[] memory) {
+        uint256 length = _tokenIds.length;
+        uint256[] memory amounts = new uint256[](length);
+
+        for (uint256 i = 0; i < length;) {
+            amounts[i] = getAuraAmount(_tokenIds[i]);
+            unchecked {
+                ++i;
+            }
+        }
+
+        return amounts;
+    }
+
     function burn(uint256 _tokenId) public {
         require(msg.sender == ownerOf(_tokenId), "not owner of the token");
         uint256 amount = getAuraAmount(_tokenId);
