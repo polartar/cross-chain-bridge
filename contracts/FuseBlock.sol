@@ -5,25 +5,35 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "hardhat/console.sol";
+
+interface IItem {
+    function mint(address _address, uint256 _tokenId, uint256 _quantity, uint256 _auraAmount) external;
+}
+
 contract FuseBlock is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter public _tokenIdCounter;
 
     address public auraAddress;
     mapping(uint256 => uint256) auraAmounts;
-    string baseURI = "ipfs://test";
+    string baseURI = "https://ipfs.io/ipfs/QmbaD9hWLx3hu2yzH1Uo7mu6236jnekC9dzmxHM3NKvKhL";
     uint256 minAuraAmount;
     uint256 totalReleasedAmount;
     uint16 rate;
-    uint16 constant public SCALE = 100;
+    uint8 constant public SCALE = 100;
     bool public isRealAura;
+
+    address itemAddress;
 
     constructor (address _auraAddress) ERC721 ("Infuse NFT", "NFT") {
         auraAddress = _auraAddress;
         _tokenIdCounter.increment();
         minAuraAmount = 2 ether;
         rate = 100;
+    }
+
+    function setItemAddress(address _newItemAddress) external onlyOwner {
+        itemAddress = _newItemAddress;
     }
 
     function getTotalAuraAmount() public view onlyOwner returns(uint256) {
@@ -57,6 +67,19 @@ contract FuseBlock is ERC721, Ownable {
         _tokenIdCounter.increment();
     }
 
+    function mintItem(uint256 _fuseBlockId, uint256 _tokenId, uint256 _quantity, uint256 _auraAmount) external{
+        require(itemAddress != address(0), "item NFT not set");
+        require(ownerOf(_fuseBlockId) == msg.sender, "not token owner");
+        require(_auraAmount >= 0, "invalid aura amount");
+        uint256 _totalAmount = _auraAmount * _quantity;
+        require(auraAmounts[_fuseBlockId] >= _totalAmount, "insufficient balance");
+        auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
+
+        totalReleasedAmount = totalReleasedAmount - _totalAmount;
+        IERC20(auraAddress).transfer(itemAddress, _totalAmount);
+        IItem(itemAddress).mint(msg.sender, _tokenId, _quantity, _totalAmount);
+    }
+
     // function setRate(uint16 _rate) external onlyOwner {
     //     require(_rate > 0 && _rate <= 100, "rate should be within 1-100");
     //     rate = _rate;
@@ -69,18 +92,20 @@ contract FuseBlock is ERC721, Ownable {
         return auraAmounts[_tokenId];
     }
 
-    function getAuraAmounts(uint256[] calldata _tokenIds) public view returns(uint256[] memory) {
+    function getFuseBlockInfo(uint256[] calldata _tokenIds) public view returns(uint256[] memory, string[] memory) {
         uint256 length = _tokenIds.length;
         uint256[] memory amounts = new uint256[](length);
+        string[] memory uris = new string[](length); 
 
         for (uint256 i = 0; i < length;) {
             amounts[i] = getAuraAmount(_tokenIds[i]);
+            uris[i] = tokenURI(_tokenIds[i]);
             unchecked {
                 ++i;
             }
         }
 
-        return amounts;
+        return (amounts, uris);
     }
 
     function burn(uint256 _tokenId) public {
@@ -101,7 +126,7 @@ contract FuseBlock is ERC721, Ownable {
     function tokenURI(uint _tokenId) public view virtual override returns (string memory) {
       require(_exists(_tokenId),"ERC721Metadata: URI query for nonexistent token");
 
-      string memory _tokenURI = string(abi.encodePacked(baseURI, "/", Strings.toString(_tokenId), ".json"));
+      string memory _tokenURI = string(abi.encodePacked(baseURI, "/", Strings.toString(_tokenId), ".png"));
 
       return _tokenURI;
     }

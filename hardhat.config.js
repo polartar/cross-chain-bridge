@@ -3,6 +3,7 @@ require("dotenv").config();
 require("@nomiclabs/hardhat-etherscan");
 require("solidity-coverage");
 require("hardhat-gas-reporter");
+require("@openzeppelin/hardhat-upgrades")
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -46,7 +47,10 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY]
     },
     mumbai: {
-      url: "https://rpc-mumbai.maticvigil.com",
+      // url: "https://rpc-mumbai.maticvigil.com",
+      // url: "https://rpc-mumbai.matic.today/",
+      url: "https://rpc-mumbai.maticvigil.com/v1/f0ee4a1388582453bd9371fd6378578b976f21b8",
+      // url: "https://rpc-mumbai.maticvigil.today/",
       accounts: [process.env.PRIVATE_KEY],
     },
     avalanche : {
@@ -67,6 +71,6 @@ module.exports = {
     timeout: 200000
   },
   etherscan: {
-    apiKey: process.env.AVAX_API_KEY
+    apiKey: process.env.POLYGON_API_KEY
   },
 };
