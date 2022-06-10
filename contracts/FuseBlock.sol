@@ -75,9 +75,8 @@ contract FuseBlock is ERC721, Ownable {
         require(auraAmounts[_fuseBlockId] >= _totalAmount, "insufficient balance");
         auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
 
-        totalReleasedAmount = totalReleasedAmount - _totalAmount;
         IERC20(auraAddress).transfer(itemAddress, _totalAmount);
-        IItem(itemAddress).mint(msg.sender, _tokenId, _quantity, _totalAmount);
+        IItem(itemAddress).mint(msg.sender, _tokenId, _quantity, _auraAmount);
     }
 
     // function setRate(uint16 _rate) external onlyOwner {

@@ -2,7 +2,7 @@ const hre = require("hardhat");
 
 async function main() {
   // const Item = await hre.ethers.getContractFactory("Item");
-  // const item = await Item.deploy("0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be", "0xF60848d10Dc59B9813e98Aa394d7Af97E75E1F96");
+  // const item = await Item.deploy("0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be", "0x7025E904e25247879258d7b2c0aAD8cf5c90d252");
 
   // await item.deployed();
 
@@ -10,11 +10,11 @@ async function main() {
 
    
   await hre.run("verify:verify", {
-    address: "0x064085Bf72ffdd89d19bbb85fA11bc90E4cD8247",
+    address: "0xD17e0cD2C708de7350dE9D1D84E99A79B331F933",
     contract: "contracts/Item.sol:Item",
     constructorArguments: [
       "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be",
-      "0xF60848d10Dc59B9813e98Aa394d7Af97E75E1F96"
+      "0x7025E904e25247879258d7b2c0aAD8cf5c90d252"
     ]
   });
 }
