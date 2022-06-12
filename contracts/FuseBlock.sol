@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 interface IItem {
-    function mint(address _address, uint256 _tokenId, uint256 _quantity, uint256 _auraAmount) external;
+    function mint(address _address, string memory _tokenId, uint256 _quantity, uint256 _auraAmount) external;
 }
 
 contract FuseBlock is ERC721, Ownable {
@@ -67,7 +67,7 @@ contract FuseBlock is ERC721, Ownable {
         _tokenIdCounter.increment();
     }
 
-    function mintItem(uint256 _fuseBlockId, uint256 _tokenId, uint256 _quantity, uint256 _auraAmount) external{
+    function mintItem(uint256 _fuseBlockId, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) external{
         require(itemAddress != address(0), "item NFT not set");
         require(ownerOf(_fuseBlockId) == msg.sender, "not token owner");
         require(_auraAmount >= 0, "invalid aura amount");
@@ -76,7 +76,7 @@ contract FuseBlock is ERC721, Ownable {
         auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
 
         IERC20(auraAddress).transfer(itemAddress, _totalAmount);
-        IItem(itemAddress).mint(msg.sender, _tokenId, _quantity, _auraAmount);
+        IItem(itemAddress).mint(msg.sender, _itemUUID, _quantity, _auraAmount);
     }
 
     // function setRate(uint16 _rate) external onlyOwner {

@@ -29,7 +29,7 @@ async function main() {
   //   ]
   // });
   await hre.run("verify:verify", {
-    address: "0x7025E904e25247879258d7b2c0aAD8cf5c90d252",
+    address: "0x21c5160C38F5C61Eb198195390365Bc0173B7238",
     contract: "contracts/FuseBlock.sol:FuseBlock",
     constructorArguments: [
       "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be"

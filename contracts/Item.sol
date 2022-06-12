@@ -3,19 +3,30 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Item is ERC1155, Ownable{
+    struct ItemInfo {
+        string itemUUID;
+        uint256 auraAmount;
+        string tokenURI;
+    }
+    using Counters for Counters.Counter;
+    Counters.Counter public _tokenIdCounter;
+
     address public auraAddress;
     address public fuseBlockAddress;
-    mapping(uint256 => string) tokenURIs;
-    mapping(uint256 => uint256) auraAmounts;
+    // mapping(uint256 => string) tokenURIs;
+    // mapping(uint256 => uint256) auraAmounts;
+    mapping(uint256 => ItemInfo) items;
 
-    string DEFAULT_URI= "https://ipfs.io/ipfs/bafybeieg7xjxuzpc7vdie6mjefpoz5kd5sjipieextxqpgnsjglhjvwvpy/1.json";
+    string DEFAULT_URI= "https://ipfs.io/ipfs/QmbaD9hWLx3hu2yzH1Uo7mu6236jnekC9dzmxHM3NKvKhL/1.png";
 
 
     constructor (address _auraAddress, address _fuseBlockAddress) ERC1155 ("") {
         auraAddress = _auraAddress;
         fuseBlockAddress = _fuseBlockAddress;
+        _tokenIdCounter.increment();
     }
 
     modifier onlyFuseBlock() {
@@ -24,21 +35,25 @@ contract Item is ERC1155, Ownable{
     }
 
     function uri(uint256 _tokenId) public view virtual override returns (string memory) {
-        if (bytes(tokenURIs[_tokenId]).length != 0) {
-            return tokenURIs[_tokenId];
+        if (bytes(items[_tokenId].tokenURI).length != 0) {
+            return items[_tokenId].tokenURI;
         } else {
             return DEFAULT_URI;
         }
     }
 
     function setURI(uint256 _tokenId, string memory _uri) public onlyOwner {
-        tokenURIs[_tokenId] = _uri;
+        items[_tokenId].tokenURI = _uri;
     }
 
-    function mint(address _address, uint256 _tokenId, uint256 _quantity, uint256 _auraAmount) public onlyFuseBlock{
+    function mint(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyFuseBlock{
         require(_quantity > 0, "invalid quantity");
-        _mint(_address, _tokenId, _quantity, "");
-         auraAmounts[_tokenId] = _auraAmount;
+
+        uint256 tokenId = _tokenIdCounter.current();
+        _mint(_receiver, tokenId, _quantity, "");
+        _tokenIdCounter.increment();
+
+        items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount, tokenURI: ""});
     }
 
     function updateAuraAddress(address _newAuraAddress) external onlyOwner {
@@ -49,13 +64,21 @@ contract Item is ERC1155, Ownable{
         fuseBlockAddress = _newFuseBlockAddress;
     }
 
-
     function getAuraAmount(uint256 _tokenId) public view returns (uint256) {
-        return auraAmounts[_tokenId];
+        return items[_tokenId].auraAmount;
     }
-    
-    // function updateTokenURI(uint _tokenId, string memory _tokenURI) external {
-    //     require(ownerOf(_tokenId) == msg.sender, "not token owner");
-    //     tokenURIs[_tokenId] = _tokenURI;
-    // }
+
+    function getItemsInfo(uint256[] calldata _ids) external view returns(ItemInfo[] memory) {
+        uint256 len = _ids.length;
+        ItemInfo[] memory _items = new ItemInfo[](len);
+
+        for (uint256 i = 0; i < len;) {
+            _items[i] =  items[i];
+            unchecked {
+                ++i;
+            }
+        }
+
+        return _items;
+    }
 }
