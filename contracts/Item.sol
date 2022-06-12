@@ -73,7 +73,7 @@ contract Item is ERC1155, Ownable{
         ItemInfo[] memory _items = new ItemInfo[](len);
 
         for (uint256 i = 0; i < len;) {
-            _items[i] =  items[i];
+            _items[i] =  items[_ids[i]];
             unchecked {
                 ++i;
             }

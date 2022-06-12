@@ -10,7 +10,7 @@ async function main() {
 
    
   await hre.run("verify:verify", {
-    address: "0xE3282D186add1Fa2cb434D2C174B60C791185A51",
+    address: "0x5Eb37c09C6AF715618c5400232F975C510296e73",
     contract: "contracts/Item.sol:Item",
     constructorArguments: [
       "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be",
