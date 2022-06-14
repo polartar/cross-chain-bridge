@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 interface IItem {
     function mint(address _address, string memory _tokenId, uint256 _quantity, uint256 _auraAmount) external;
+    function cancelItems(uint256 _fuseBlockId) external;
 }
 
 contract FuseBlock is ERC721, Ownable {
@@ -16,9 +17,9 @@ contract FuseBlock is ERC721, Ownable {
 
     address public auraAddress;
     mapping(uint256 => uint256) auraAmounts;
+    mapping(uint256 => bool) meetRequirements;
     string baseURI = "https://ipfs.io/ipfs/QmbaD9hWLx3hu2yzH1Uo7mu6236jnekC9dzmxHM3NKvKhL";
     uint256 minAuraAmount;
-    uint256 totalReleasedAmount;
     uint16 rate;
     uint8 constant public SCALE = 100;
     bool public isRealAura;
@@ -49,24 +50,54 @@ contract FuseBlock is ERC721, Ownable {
         rate = _rate;
         isRealAura = true;
         auraAddress = _newAuraAddress;
-        totalReleasedAmount = totalReleasedAmount * rate / SCALE;
     }
 
+    // set minimum aura amount for mint
     function setMinAuraAmount(uint256 _minAuraAmount) external onlyOwner {
         minAuraAmount = _minAuraAmount;
     }
 
-    function mint(address _address, uint256 _amount) public onlyOwner{
-        require(_amount >= minAuraAmount, "should include minimum aura");
-        totalReleasedAmount += _amount;
-        require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
+    // mint fuseblock for promotion
+    function mint(address _address, uint256 _auraAmount) public onlyOwner{
+        require(_auraAmount >= minAuraAmount, "should include minimum aura");
+        // require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
         uint256 tokenId = _tokenIdCounter.current();
-        // IERC20(auraAddress).transferFrom(msg.sender, address(this), _amount);
+        IERC20(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
         _safeMint(_address, tokenId);
-        auraAmounts[tokenId] = _amount;
+        auraAmounts[tokenId] = _auraAmount;
         _tokenIdCounter.increment();
     }
 
+    // mint fuseBlock with Aura
+    function purchase(uint256 _auraAmount) public {
+        require(_auraAmount >= minAuraAmount, "should include minimum aura");
+        // require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
+        uint256 tokenId = _tokenIdCounter.current();
+        IERC20(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
+        _safeMint(msg.sender, tokenId);
+        auraAmounts[tokenId] = _auraAmount;
+        _tokenIdCounter.increment();
+
+        meetRequirements[tokenId] = true;
+    }
+
+    // get requirement status
+    function getRequirementStatus(uint256 _tokenId) public view returns(bool) {
+        return meetRequirements[_tokenId];
+    }
+
+    function setRequirementStatus(uint256 _tokenId, bool _status) external onlyOwner {
+        meetRequirements[_tokenId] = _status;
+    }
+
+    // cancel the fuseblock, get back $aura, cancel item NFT
+    function cancelFuseblock(uint256 _tokenId) external onlyOwner {
+        require(!meetRequirements[_tokenId], "meet requirement");
+        burn(_tokenId);
+        IItem(itemAddress).cancelItems(_tokenId);
+    }
+
+    // mint Item from fuseBlock
     function mintItem(uint256 _fuseBlockId, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) external{
         require(itemAddress != address(0), "item NFT not set");
         require(ownerOf(_fuseBlockId) == msg.sender, "not token owner");
@@ -84,6 +115,14 @@ contract FuseBlock is ERC721, Ownable {
     //     rate = _rate;
     // }
 
+    function _calculateRealAuraAmount(uint256 _amount) private view returns(uint256) {
+        if (isRealAura) {
+            return _amount;
+        }
+        return _amount * SCALE / rate;
+    }
+
+    // get Aura amount for the fuseBlock
     function getAuraAmount(uint256 _tokenId) public view returns (uint256) {
         if (isRealAura) {
             return auraAmounts[_tokenId] * rate / SCALE;
@@ -91,6 +130,7 @@ contract FuseBlock is ERC721, Ownable {
         return auraAmounts[_tokenId];
     }
 
+    // get aura amounts and token uris from the tokenIDs
     function getFuseBlockInfo(uint256[] calldata _tokenIds) public view returns(uint256[] memory, string[] memory) {
         uint256 length = _tokenIds.length;
         uint256[] memory amounts = new uint256[](length);
@@ -108,12 +148,10 @@ contract FuseBlock is ERC721, Ownable {
     }
 
     function burn(uint256 _tokenId) public {
-        require(msg.sender == ownerOf(_tokenId), "not owner of the token");
+        require(msg.sender == ownerOf(_tokenId) || msg.sender == owner(), "not owner of the token");
         uint256 amount = getAuraAmount(_tokenId);
-        require(amount <= _getTotalAuraAmount(), "not enough funds");
         
         auraAmounts[_tokenId] = 0;
-        totalReleasedAmount = totalReleasedAmount - amount;
         IERC20(auraAddress).transfer(msg.sender, amount);
         _burn(_tokenId);
     }
@@ -128,5 +166,11 @@ contract FuseBlock is ERC721, Ownable {
       string memory _tokenURI = string(abi.encodePacked(baseURI, "/", Strings.toString(_tokenId), ".png"));
 
       return _tokenURI;
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override virtual {
+        if (!meetRequirements[tokenId]) {
+            revert("requirement not meet");
+        }
     }
 }
