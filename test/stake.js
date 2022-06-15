@@ -25,7 +25,7 @@ describe("Stake", function () {
     await fuseBlock.deployed();
 
     await mockAura.approve(fuseBlock.address, parseEther("1000"));
-    await mockAura.transfer(fuseBlock.address, parseEther("1000"));
+    // await mockAura.transfer(fuseBlock.address, parseEther("1000"));
     
     stake = await Stake.deploy(fuseBlock.address, mockAura.address);
     await stake.deployed();

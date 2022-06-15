@@ -60,7 +60,6 @@ contract FuseBlock is ERC721, Ownable {
     // mint fuseblock for promotion
     function mint(address _address, uint256 _auraAmount) public onlyOwner{
         require(_auraAmount >= minAuraAmount, "should include minimum aura");
-        // require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
         uint256 tokenId = _tokenIdCounter.current();
         IERC20(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
         _safeMint(_address, tokenId);
@@ -168,8 +167,8 @@ contract FuseBlock is ERC721, Ownable {
       return _tokenURI;
     }
 
-    function _beforeTokenTransfer(address from, address, uint256 tokenId) internal override virtual {
-        if (address(0) != from && !meetRequirements[tokenId]) {
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override virtual {
+        if (address(0) != to && address(0) != from && !meetRequirements[tokenId]) {
             revert("requirement not meet");
         }
     }

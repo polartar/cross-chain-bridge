@@ -7,10 +7,10 @@ describe("FuseBlock", function () {
   let MockAura;
   let fuseBlock;
   let mockAura;
-  let admin, user;
+  let admin, user, user1;
 
   before(async function() {
-    [admin, user] = await ethers.getSigners();
+    [admin, user, user1] = await ethers.getSigners();
     MockAura = await ethers.getContractFactory("MockERC20");
     FuseBlock = await ethers.getContractFactory("FuseBlock");
   })
@@ -21,13 +21,14 @@ describe("FuseBlock", function () {
     fuseBlock = await FuseBlock.deploy(mockAura.address);
     await fuseBlock.deployed();
 
-    await mockAura.transfer(fuseBlock.address, parseEther("1000"));
+    // await mockAura.transfer(fuseBlock.address, parseEther("1000"));
     await mockAura.approve(fuseBlock.address, parseEther("1000"));
+    await mockAura.setFuseBlockAddress(fuseBlock.address);
   })
 
   it("Should get total aura amount", async function () {
     const amount = await fuseBlock.getTotalAuraAmount();
-    expect(amount).to.be.equal(parseEther("1000"));
+    expect(amount).to.be.equal(parseEther("0"));
    });
  
   it("Should Mint NFT", async function () {
@@ -57,15 +58,25 @@ describe("FuseBlock", function () {
     await expect(fuseBlock.ownerOf(1)).to.be.reverted;
   });
 
-  it("Should user gets the aura token after NFT ownership is changed from admin to user", async function () {
+  it("Should not transfer if requirements doesn't meet", async function () {
     await fuseBlock.mint(admin.address, parseEther("100"));
     
     // transfer NFT from admin to user;
-    await fuseBlock.approve(user.address, 1);
-    await fuseBlock.transferFrom(admin.address, user.address, 1);
+    await expect(fuseBlock.transferFrom(admin.address, user.address, 1)).to.be.revertedWith("requirement not meet");
+    
+    await fuseBlock.setRequirementStatus(1, true);
+    fuseBlock.transferFrom(admin.address, user.address, 1);
+    expect(await fuseBlock.ownerOf(1)).to.be.equal(user.address);
+  });
+
+  it("Should user gets the aura token after NFT ownership is changed from admin to user", async function () {
+    await fuseBlock.mint(admin.address, parseEther("100"));
+    
+    await fuseBlock.setRequirementStatus(1, true);
+    fuseBlock.transferFrom(admin.address, user.address, 1);
 
     // check if user gets the aura from the NFT when it is burned
-    await expect(fuseBlock.burn(1)).to.be.revertedWith("not owner of the token");
+    await expect(fuseBlock.connect(user1).burn(1)).to.be.revertedWith("not owner of the token");
     await expect(() => fuseBlock.connect(user).burn(1)).to.changeTokenBalance(mockAura, user, parseEther("100"));
   });
 
@@ -73,7 +84,7 @@ describe("FuseBlock", function () {
     await fuseBlock.mint(admin.address, parseEther("100"));
     
     const tokenURI = await fuseBlock.tokenURI(1);
-    expect(tokenURI).to.be.equal(`ipfs://test/1.json`);
+    expect(tokenURI).to.be.equal(`https://ipfs.io/ipfs/QmbaD9hWLx3hu2yzH1Uo7mu6236jnekC9dzmxHM3NKvKhL/1.png`);
   });
   
   it("Should modify the baseURI", async function () {
@@ -81,7 +92,7 @@ describe("FuseBlock", function () {
     await fuseBlock.setBaseURI("ipfs://testURI");
 
     const tokenURI = await fuseBlock.tokenURI(1);
-    expect(tokenURI).to.be.equal(`ipfs://testURI/1.json`);
+    expect(tokenURI).to.be.equal(`ipfs://testURI/1.png`);
   });
 
   it("Should set the rate", async function () {
