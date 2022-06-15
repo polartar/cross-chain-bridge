@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 interface IItem {
-    function mint(address _address, string memory _tokenId, uint256 _quantity, uint256 _auraAmount) external;
+    function mint(uint256 _fuseBlockId, address _address, string memory _tokenId, uint256 _quantity, uint256 _auraAmount) external;
     function cancelItems(uint256 _fuseBlockId) external;
 }
 
@@ -69,17 +69,17 @@ contract FuseBlock is ERC721, Ownable {
     }
 
     // mint fuseBlock with Aura
-    function purchase(uint256 _auraAmount) public {
-        require(_auraAmount >= minAuraAmount, "should include minimum aura");
-        // require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
-        uint256 tokenId = _tokenIdCounter.current();
-        IERC20(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
-        _safeMint(msg.sender, tokenId);
-        auraAmounts[tokenId] = _auraAmount;
-        _tokenIdCounter.increment();
+    // function purchase(uint256 _auraAmount) public {
+    //     require(_auraAmount >= minAuraAmount, "should include minimum aura");
+    //     // require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
+    //     uint256 tokenId = _tokenIdCounter.current();
+    //     IERC20(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
+    //     _safeMint(msg.sender, tokenId);
+    //     auraAmounts[tokenId] = _auraAmount;
+    //     _tokenIdCounter.increment();
 
-        meetRequirements[tokenId] = true;
-    }
+    //     meetRequirements[tokenId] = true;
+    // }
 
     // get requirement status
     function getRequirementStatus(uint256 _tokenId) public view returns(bool) {
@@ -107,7 +107,7 @@ contract FuseBlock is ERC721, Ownable {
         auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
 
         IERC20(auraAddress).transfer(itemAddress, _totalAmount);
-        IItem(itemAddress).mint(msg.sender, _itemUUID, _quantity, _auraAmount);
+        IItem(itemAddress).mint(_fuseBlockId, msg.sender, _itemUUID, _quantity, _auraAmount);
     }
 
     // function setRate(uint16 _rate) external onlyOwner {
@@ -168,8 +168,8 @@ contract FuseBlock is ERC721, Ownable {
       return _tokenURI;
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override virtual {
-        if (!meetRequirements[tokenId]) {
+    function _beforeTokenTransfer(address from, address, uint256 tokenId) internal override virtual {
+        if (address(0) != from && !meetRequirements[tokenId]) {
             revert("requirement not meet");
         }
     }
