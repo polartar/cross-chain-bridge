@@ -92,8 +92,8 @@ contract FuseBlock is ERC721, Ownable {
     // cancel the fuseblock, get back $aura, cancel item NFT
     function cancelFuseblock(uint256 _tokenId) external onlyOwner {
         require(!meetRequirements[_tokenId], "meet requirement");
-        burn(_tokenId);
         IItem(itemAddress).cancelItems(_tokenId);
+        burn(_tokenId);
     }
 
     // mint Item from fuseBlock
@@ -102,7 +102,7 @@ contract FuseBlock is ERC721, Ownable {
         require(ownerOf(_fuseBlockId) == msg.sender, "not token owner");
         require(_auraAmount >= 0, "invalid aura amount");
         uint256 _totalAmount = _auraAmount * _quantity;
-        require(auraAmounts[_fuseBlockId] >= _totalAmount, "insufficient balance");
+        require(auraAmounts[_fuseBlockId] >= _totalAmount, "insufficient aura balance");
         auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
 
         IERC20(auraAddress).transfer(itemAddress, _totalAmount);

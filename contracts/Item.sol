@@ -31,14 +31,11 @@ contract Item is ERC1155, Ownable{
     address public fuseBlockAddress;
     mapping(uint256 => ItemInfo) items;
     mapping(uint256 => FuseBlockInfo) fuseBlockItems;
-    // mapping(uint256 => uint256[]) fuseBlockItemIds;
-    // mapping(uint256 => uint256[]) fuseBlockItemAmounts;
 
     // itemId => fuseBlockId
     mapping(uint256 => uint256) fuseBlockIds;
 
     string DEFAULT_URI= "https://ipfs.io/ipfs/QmbaD9hWLx3hu2yzH1Uo7mu6236jnekC9dzmxHM3NKvKhL/1.png";
-
 
     constructor (address _auraAddress, address _fuseBlockAddress) ERC1155 ("") {
         auraAddress = _auraAddress;
@@ -62,7 +59,7 @@ contract Item is ERC1155, Ownable{
     function cancelItems(uint256 _fuseBlockId) external onlyFuseBlock {
         //return back aura to fuseblock
         FuseBlockInfo memory fuseBlockItem = fuseBlockItems[_fuseBlockId];
-        IERC20(auraAddress).transferFrom(msg.sender, fuseBlockAddress, fuseBlockItem.auraAmount);
+        IERC20(auraAddress).transfer(tx.origin, fuseBlockItem.auraAmount);
         _burnBatch(fuseBlockItem.receiver, fuseBlockItem.itemIds, fuseBlockItem.itemAmounts);
     }
 
@@ -99,6 +96,10 @@ contract Item is ERC1155, Ownable{
 
     function getAuraAmount(uint256 _tokenId) public view returns (uint256) {
         return items[_tokenId].auraAmount;
+    }
+
+    function getItemsFromFuseBlock(uint256 _fuseBlockId) external view returns(FuseBlockInfo memory) {
+        return fuseBlockItems[_fuseBlockId];
     }
 
     function getItemsInfo(uint256[] calldata _ids) external view returns(ItemInfo[] memory) {

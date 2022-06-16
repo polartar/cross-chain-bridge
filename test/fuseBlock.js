@@ -5,14 +5,17 @@ const { ethers } = require("hardhat");
 describe("FuseBlock", function () {
   let FuseBlock;
   let MockAura;
+  let Item;
   let fuseBlock;
   let mockAura;
+  let item;
   let admin, user, user1;
 
   before(async function() {
     [admin, user, user1] = await ethers.getSigners();
     MockAura = await ethers.getContractFactory("MockERC20");
     FuseBlock = await ethers.getContractFactory("FuseBlock");
+    Item = await ethers.getContractFactory("Item");
   })
   beforeEach(async function() {
     mockAura = await MockAura.deploy();
@@ -20,10 +23,16 @@ describe("FuseBlock", function () {
 
     fuseBlock = await FuseBlock.deploy(mockAura.address);
     await fuseBlock.deployed();
+    
+    item = await Item.deploy(mockAura.address, fuseBlock.address);
+    await item.deployed();
 
     // await mockAura.transfer(fuseBlock.address, parseEther("1000"));
-    await mockAura.approve(fuseBlock.address, parseEther("1000"));
+    await mockAura.approve(fuseBlock.address, parseEther("10000"));
     await mockAura.setFuseBlockAddress(fuseBlock.address);
+    await mockAura.setItemAddress(item.address);
+
+    await fuseBlock.setItemAddress(item.address);
   })
 
   it("Should get total aura amount", async function () {
@@ -96,11 +105,6 @@ describe("FuseBlock", function () {
   });
 
   it("Should set the rate", async function () {
-    // await expect(fuseBlock.setRate(101)).to.be.revertedWith("rate should be within 1-100");
-    // await expect(fuseBlock.setRate(0)).to.be.revertedWith("rate should be within 1-100");
-
-    // await fuseBlock.setRate(50);  // set the $karma:$aura = 1: 0.5;
-
     await fuseBlock.mint(admin.address, parseEther("100"));
     const amount = await fuseBlock.getAuraAmount(1);
     expect(amount).to.be.equal(parseEther("100"));
@@ -109,4 +113,43 @@ describe("FuseBlock", function () {
     const realamount = await fuseBlock.getAuraAmount(1);
     expect(realamount).to.be.equal(parseEther("50"));
   });
+
+  it("Should mint item from fuseBlock", async function () {
+    await fuseBlock.mint(user.address, parseEther("100"));
+    await expect(fuseBlock.connect(user1).mintItem(1, "uuid", 2, parseEther("10"))).to.be.revertedWith("not token owner");
+    await expect(fuseBlock.connect(user).mintItem(1, "uuid", 2, parseEther("101"))).to.be.revertedWith("insufficient aura balance");
+
+    await expect(() =>fuseBlock.connect(user).mintItem(1, "uuid", 2, parseEther("10"))).to.changeTokenBalance(mockAura, fuseBlock, parseEther("-20"));
+
+    expect(await item.balanceOf(user.address, 1)).to.be.equal(2);
+    const items = await item.getItemsFromFuseBlock(1);
+    expect(items.auraAmount).to.be.equal(parseEther("20"));
+    expect(items.itemIds[0]).to.be.equal(1);
+    expect(items.itemAmounts[0]).to.be.equal(2);
+    expect(items.receiver).to.be.equal(user.address);
+  });
+ 
+  it("Should cancel items from fuseBlock", async function () {
+    await fuseBlock.mint(user.address, parseEther("100"));
+
+    await fuseBlock.connect(user).mintItem(1, "uuid", 2, parseEther("10"));
+
+    await expect(() => fuseBlock.cancelFuseblock(1)).to.changeTokenBalance(mockAura, admin, parseEther("100"));
+    
+    expect(await fuseBlock.balanceOf(user.address)).to.be.equal(0);
+    expect(await item.balanceOf(user.address, 1)).to.be.equal(0);
+  });
+  
+  it("Should not tranfer item nft when fuseblock doesn't meet the requirement", async function () {
+    await fuseBlock.mint(user.address, parseEther("100"));
+
+    await fuseBlock.connect(user).mintItem(1, "uuid", 2, parseEther("10"));
+   
+    await expect(item.connect(user).safeTransferFrom(user.address, user1.address, 1, 1, ethers.utils.formatBytes32String(""))).to.be.revertedWith("fuseblock requirement not mint");
+    
+    await fuseBlock.setRequirementStatus(1, true);
+    await item.connect(user).safeTransferFrom(user.address, user1.address, 1, 1,  ethers.utils.formatBytes32String(""));
+    expect(await item.balanceOf(user1.address, 1)).to.be.equal(1);
+  });
+
 });
