@@ -9,30 +9,29 @@ async function main() {
   // await mockAura.deployed();
 
   // console.log("Aura address: ", mockAura.address);  
-  // //0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be
-  // //0xf3644a8896A51b947Dd29CD3e91aE0cbF4dC785A avalanche
 
   // const FuseBlock = await hre.ethers.getContractFactory("FuseBlock");
-  // const fuseBlock = await FuseBlock.deploy("0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be");
+  // const fuseBlock = await FuseBlock.deploy("0x49eD8ee91A92986f9976E3e5e25B66351490a0c9");
 
   // await fuseBlock.deployed();
 
   // console.log("FuseBlock deployed to:", fuseBlock.address); 
-  //0x4c16D9032560600Db5Bd1211965a2982be7e0fEA
-  //0x3579F235D13419ABD8B4784aB24282283f3AcBB0 avalanche
+  
+  // aura: 0x49eD8ee91A92986f9976E3e5e25B66351490a0c9
+  // fuseblock: 0xa591ae9B8766008a80D970f177d84823a75bDd42
 
   // await hre.run("verify:verify", {
-  //   address: "0xf3644a8896A51b947Dd29CD3e91aE0cbF4dC785A",
+  //   address: "0x49eD8ee91A92986f9976E3e5e25B66351490a0c9",
   //   contract: "contracts/MockERC20.sol:MockERC20",
   //   constructorArguments: [
 
   //   ]
   // });
   await hre.run("verify:verify", {
-    address: "0x21c5160C38F5C61Eb198195390365Bc0173B7238",
+    address: "0x45BEdC9A0Ac0D5A358cdcd840F1Fb2efaf1b8671",
     contract: "contracts/FuseBlock.sol:FuseBlock",
     constructorArguments: [
-      "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be"
+      "0x49eD8ee91A92986f9976E3e5e25B66351490a0c9"
     ]
   });
 }

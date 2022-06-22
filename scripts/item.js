@@ -1,22 +1,22 @@
 const hre = require("hardhat");
 
 async function main() {
-  // const Item = await hre.ethers.getContractFactory("Item");
-  // const item = await Item.deploy("0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be", "0x21c5160C38F5C61Eb198195390365Bc0173B7238");
+  const Item = await hre.ethers.getContractFactory("Item");
+  const item = await Item.deploy("0x49eD8ee91A92986f9976E3e5e25B66351490a0c9", "0x45BEdC9A0Ac0D5A358cdcd840F1Fb2efaf1b8671");
 
-  // await item.deployed();
+  await item.deployed();
 
-  // console.log("Item deployed to:", item.address); 
+  console.log("Item deployed to:", item.address); 
 
    
-  await hre.run("verify:verify", {
-    address: "0x5Eb37c09C6AF715618c5400232F975C510296e73",
-    contract: "contracts/Item.sol:Item",
-    constructorArguments: [
-      "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be",
-      "0x21c5160C38F5C61Eb198195390365Bc0173B7238"
-    ]
-  });
+  // await hre.run("verify:verify", {
+  //   address: "0x95Ded6A8Dc881E568C5125CA7196AAA5998dEB14",
+  //   contract: "contracts/Item.sol:Item",
+  //   constructorArguments: [
+  //     "0x49eD8ee91A92986f9976E3e5e25B66351490a0c9",
+  //     "0x45BEdC9A0Ac0D5A358cdcd840F1Fb2efaf1b8671"
+  //   ]
+  // });
 }
 
 // We recommend this pattern to be able to use async/await everywhere
