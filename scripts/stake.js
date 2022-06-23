@@ -2,21 +2,22 @@ const hre = require("hardhat");
 
 async function main() {
   // We get the contract to deploy
-  // const Stake = await hre.ethers.getContractFactory("Stake");
-  // const stake = await Stake.deploy("0x8D5163EaFF18136eAE74298388E0E579032603C3", "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be");
+  const Stake = await hre.ethers.getContractFactory("Stake");
+  const stake = await Stake.deploy("0xe9E4724997447B6C76494Fa1b44F05A490eD6A57","0x52e67E6C977441297FA6E83D948DB843bdD4955C", "0x74d75261Ab56d752E2c7AE6298E58Cd2f0D70B5a");
 
-  // await stake.deployed();
+  await stake.deployed();
 
-  // console.log("Stake deployed to:", stake.address); //0x60215b74ce3A3BeFA7356531D84b32a6196608C0
+  console.log("Stake deployed to:", stake.address); //0xb1ec706b550755e7B07079d1173996B41c026336
 
-  await hre.run("verify:verify", {
-    address: "0x60215b74ce3A3BeFA7356531D84b32a6196608C0",
-    contract: "contracts/Stake.sol:Stake",
-    constructorArguments: [
-        "0x8D5163EaFF18136eAE74298388E0E579032603C3",
-        "0x2A34e1a13557cf755a53b0CE2B4ADcE8134967Be"
-    ]
-  });
+  // await hre.run("verify:verify", {
+  //   address: "0xa77aeB205CcfF21D1395dF1708Df85aB93A74612",
+  //   contract: "contracts/Stake.sol:Stake",
+  //   constructorArguments: [
+  //       "0xe9E4724997447B6C76494Fa1b44F05A490eD6A57",
+  //       "0x52e67E6C977441297FA6E83D948DB843bdD4955C",
+  //       "0x74d75261Ab56d752E2c7AE6298E58Cd2f0D70B5a"
+  //   ]
+  // });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

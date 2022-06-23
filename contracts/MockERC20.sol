@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract MockERC20 is ERC20, Ownable {
     address fuseBlockAddress;
     address itemAddress;
+    address stakeAddress;
 
     constructor () ERC20 ("Test", "TT") {
         _mint(msg.sender, 100000000 * (10 ** 18));
@@ -24,6 +25,10 @@ contract MockERC20 is ERC20, Ownable {
         itemAddress = _itemAddress;
     }
 
+    function setStakeAddress(address _stakeAddress) external onlyOwner {
+        stakeAddress = _stakeAddress;
+    }
+
     function _beforeTokenTransfer(address from, address to, uint256) internal override virtual {
         if (from != address(0)
             && from != fuseBlockAddress
@@ -31,6 +36,7 @@ contract MockERC20 is ERC20, Ownable {
             && to != fuseBlockAddress
             && to != itemAddress
             && from != owner()
+            && from != stakeAddress
         ) {
             revert("can't transfer");
         }

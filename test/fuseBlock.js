@@ -89,19 +89,12 @@ describe("FuseBlock", function () {
     await expect(() => fuseBlock.connect(user).burn(1)).to.changeTokenBalance(mockAura, user, parseEther("100"));
   });
 
-  it(`Should return tokenURI`, async function () {
-    await fuseBlock.mint(admin.address, parseEther("100"));
-    
-    const tokenURI = await fuseBlock.tokenURI(1);
-    expect(tokenURI).to.be.equal(`https://ipfs.io/ipfs/QmbaD9hWLx3hu2yzH1Uo7mu6236jnekC9dzmxHM3NKvKhL/1.png`);
-  });
-  
   it("Should modify the baseURI", async function () {
     await fuseBlock.mint(admin.address, parseEther("100"));
     await fuseBlock.setBaseURI("ipfs://testURI");
 
     const tokenURI = await fuseBlock.tokenURI(1);
-    expect(tokenURI).to.be.equal(`ipfs://testURI/1.png`);
+    expect(tokenURI).to.be.equal(`ipfs://testURI?tokenId=1`);
   });
 
   it("Should set the rate", async function () {

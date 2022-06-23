@@ -37,6 +37,7 @@ describe("Stake", function () {
 
     await mockAura.setFuseBlockAddress(fuseBlock.address);
     await mockAura.setItemAddress(item.address);
+    await mockAura.setStakeAddress(stake.address);
 
     await fuseBlock.setItemAddress(item.address);
 
@@ -57,6 +58,9 @@ describe("Stake", function () {
     await stake.stake(fuseBlock.address, 1, 1);
     
     expect(await fuseBlock.ownerOf(1)).to.be.equal(stake.address);
+
+    const stakedIds = await stake.getStakedIds(fuseBlock.address)
+    expect(stakedIds[0]).to.be.equal(1)
   });
 
   it("Should not stake item when fuseBlock does not meet the requirements", async function () {
@@ -77,6 +81,7 @@ describe("Stake", function () {
   });
 
   it("Should claim rewards", async function () {
+    await fuseBlock.setRequirementStatus(1, true);
     await stake.stake(fuseBlock.address, 1, 1);
     
     await ethers.provider.send("evm_increaseTime", [3600 * 2]);
@@ -85,7 +90,8 @@ describe("Stake", function () {
   });
 
   it("Should set the royalty", async function () {
-    await expect(stake.stake(fuseBlock.addres, 1)).to.be.revertedWith("requirement not meet");
+    await fuseBlock.setRequirementStatus(1, true);
+
     await stake.stake(fuseBlock.address, 1, 1);
     await expect(stake.setRoyalyInfo(user.address, 0)).to.be.revertedWith("invalid fee fraction");
     await expect(stake.setRoyalyInfo(user.address, 10000)).to.be.revertedWith("invalid fee fraction");

@@ -18,7 +18,7 @@ contract FuseBlock is ERC721, Ownable {
     address public auraAddress;
     mapping(uint256 => uint256) auraAmounts;
     mapping(uint256 => bool) meetRequirements;
-    string baseURI = "https://ipfs.io/ipfs/QmbaD9hWLx3hu2yzH1Uo7mu6236jnekC9dzmxHM3NKvKhL";
+    string baseURI;
     uint256 minAuraAmount;
     uint16 rate;
     uint8 constant public SCALE = 100;
@@ -162,7 +162,7 @@ contract FuseBlock is ERC721, Ownable {
     function tokenURI(uint _tokenId) public view virtual override returns (string memory) {
       require(_exists(_tokenId),"ERC721Metadata: URI query for nonexistent token");
 
-      string memory _tokenURI = string(abi.encodePacked(baseURI, "/", Strings.toString(_tokenId), ".png"));
+      string memory _tokenURI = string(abi.encodePacked(baseURI, "?tokenId=", Strings.toString(_tokenId)));
 
       return _tokenURI;
     }
