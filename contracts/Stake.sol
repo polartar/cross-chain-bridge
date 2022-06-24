@@ -130,10 +130,10 @@ contract Stake is Ownable, IERC1155Receiver {
         }
 
         if (token.amount == _amount) {
-            delete stakes[msg.sender][_tokenId];
+            delete stakes[msg.sender][stakeIndex - 1];
             stakeIndexes[_tokenAddress][_tokenId] = 0;
-
             uint256 tokenIndex = findTokenId(msg.sender, _tokenAddress, _tokenId);
+
             require(tokenIndex != type(uint256).max, "no exist");
 
             tokenIds[msg.sender][_tokenAddress][tokenIndex] = tokenIds[msg.sender][_tokenAddress][tokenIds[msg.sender][_tokenAddress].length - 1];

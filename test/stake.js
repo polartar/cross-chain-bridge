@@ -58,9 +58,25 @@ describe("Stake", function () {
     await stake.stake(fuseBlock.address, 1, 1);
     
     expect(await fuseBlock.ownerOf(1)).to.be.equal(stake.address);
+  });
 
+  it("Should get staked Ids", async function () {
+    await fuseBlock.setRequirementStatus(1, true);
+    await fuseBlock.setRequirementStatus(2, true);
+    await stake.stake(fuseBlock.address, 1, 1);
+    await stake.stake(fuseBlock.address, 2, 1);
+    
     const stakedIds = await stake.getStakedIds(fuseBlock.address)
     expect(stakedIds[0]).to.be.equal(1)
+    expect(stakedIds[1]).to.be.equal(2)
+  });
+
+  it("Should unstake fuseBlock", async function () {
+    await fuseBlock.setRequirementStatus(1, true);
+    await stake.stake(fuseBlock.address, 1, 1);
+    expect(await fuseBlock.ownerOf(1)).to.be.equal(stake.address);
+    await stake.unstake(fuseBlock.address, 1, 1);
+    expect(await fuseBlock.ownerOf(1)).to.be.equal(admin.address);
   });
 
   it("Should not stake item when fuseBlock does not meet the requirements", async function () {

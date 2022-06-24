@@ -14,7 +14,6 @@ contract Item is ERC1155, Ownable{
     struct ItemInfo {
         string itemUUID;
         uint256 auraAmount;
-        string tokenURI;
     }
 
     struct FuseBlockInfo {
@@ -35,8 +34,6 @@ contract Item is ERC1155, Ownable{
     // itemId => fuseBlockId
     mapping(uint256 => uint256) fuseBlockIds;
 
-    string DEFAULT_URI= "https://ipfs.io/ipfs/QmbaD9hWLx3hu2yzH1Uo7mu6236jnekC9dzmxHM3NKvKhL/1.png";
-
     constructor (address _auraAddress, address _fuseBlockAddress) ERC1155 ("") {
         auraAddress = _auraAddress;
         fuseBlockAddress = _fuseBlockAddress;
@@ -48,12 +45,18 @@ contract Item is ERC1155, Ownable{
         _;
     }
 
+    function setURI(string memory newuri) external onlyOwner {
+        _setURI(newuri);
+    }
+
+    function _uriFromUUID(string memory _uuid) private view returns(string memory) {
+        string memory _tokenURI = string(abi.encodePacked(super.uri(1), "?id=", _uuid));
+        return _tokenURI;
+    }
+
     function uri(uint256 _tokenId) public view virtual override returns (string memory) {
-        if (bytes(items[_tokenId].tokenURI).length != 0) {
-            return items[_tokenId].tokenURI;
-        } else {
-            return DEFAULT_URI;
-        }
+        string memory firebaseID = items[_tokenId].itemUUID;
+        return _uriFromUUID(firebaseID);
     }
 
     function cancelItems(uint256 _fuseBlockId) external onlyFuseBlock {
@@ -61,10 +64,6 @@ contract Item is ERC1155, Ownable{
         FuseBlockInfo memory fuseBlockItem = fuseBlockItems[_fuseBlockId];
         IERC20(auraAddress).transfer(tx.origin, fuseBlockItem.auraAmount);
         _burnBatch(fuseBlockItem.receiver, fuseBlockItem.itemIds, fuseBlockItem.itemAmounts);
-    }
-
-    function setURI(uint256 _tokenId, string memory _uri) public onlyOwner {
-        items[_tokenId].tokenURI = _uri;
     }
 
     function mint(uint256 _fuseBlockId, address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyFuseBlock{
@@ -82,7 +81,7 @@ contract Item is ERC1155, Ownable{
         fuseBlockInfo.itemAmounts.push(_quantity);
         fuseBlockInfo.receiver = _receiver;
         
-        items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount, tokenURI: ""});
+        items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount});
         fuseBlockIds[tokenId] = _fuseBlockId;
     }
 

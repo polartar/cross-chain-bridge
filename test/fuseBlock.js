@@ -120,6 +120,9 @@ describe("FuseBlock", function () {
     expect(items.itemIds[0]).to.be.equal(1);
     expect(items.itemAmounts[0]).to.be.equal(2);
     expect(items.receiver).to.be.equal(user.address);
+
+    await item.setURI("https://domain.com");
+    expect(await item.uri(1)).to.be.eq("https://domain.com?id=uuid")
   });
  
   it("Should cancel items from fuseBlock", async function () {
