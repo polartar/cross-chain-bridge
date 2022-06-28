@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+
 
 interface IFuseBlock {
     function getAuraAmount(uint256 _tokenId) external view returns (uint256);
@@ -19,7 +21,7 @@ interface IItem {
     function getFuseBlockIdFromItemId(uint256 _itemId) external view returns(uint256);
     function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes memory data) external;
 }
-contract Stake is Ownable, IERC1155Receiver {
+contract Stake is UUPSUpgradeable, OwnableUpgradeable, IERC1155ReceiverUpgradeable {
     event StakeNFT(address indexed staker, address indexed tokenAddress, uint256 tokenId, uint256 amount);
     event UnStakeNFT(address indexed staker, address indexed tokenAddress, uint256 tokenId, uint256 amount);
     struct TokenInfo {
@@ -47,11 +49,22 @@ contract Stake is Ownable, IERC1155Receiver {
     uint256 royaltyFraction;
     uint256 constant FEE_DENOMINATOR = 10000;
 
-    constructor (address _fuseBlockAddress, address _itemAddress, address _auraAddress)  {
+    // constructor (address _fuseBlockAddress, address _itemAddress, address _auraAddress)  {
+    //     fuseBlockAddress = _fuseBlockAddress;
+    //     itemAddress = _itemAddress;
+    //     auraAddress = _auraAddress;
+    // }
+
+    function initialize(address _fuseBlockAddress, address _itemAddress, address _auraAddress) public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+        
         fuseBlockAddress = _fuseBlockAddress;
         itemAddress = _itemAddress;
         auraAddress = _auraAddress;
     }
+
+    function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
     modifier onlySupportToken(address _tokenAddress) {
         require(_tokenAddress == fuseBlockAddress || _tokenAddress == itemAddress, "invalid token");
@@ -180,15 +193,15 @@ contract Stake is Ownable, IERC1155Receiver {
 
     function claimRewards() public {
         uint256 rewards = calculateRewards(msg.sender);
-        require(IERC20(auraAddress).balanceOf(address(this)) >= rewards, "insufficient balance");
+        require(IERC20Upgradeable(auraAddress).balanceOf(address(this)) >= rewards, "insufficient balance");
 
         uint256 royaltyFee;
         if (royaltyReceiver != address(0)) {
             royaltyFee = rewards * royaltyFraction / FEE_DENOMINATOR;
-            IERC20(auraAddress).transfer(royaltyReceiver, royaltyFee);
-            IERC20(auraAddress).transfer(msg.sender, rewards - royaltyFee);
+            IERC20Upgradeable(auraAddress).transfer(royaltyReceiver, royaltyFee);
+            IERC20Upgradeable(auraAddress).transfer(msg.sender, rewards - royaltyFee);
         } else {
-            IERC20(auraAddress).transfer(msg.sender, rewards);
+            IERC20Upgradeable(auraAddress).transfer(msg.sender, rewards);
         }
     }
 
@@ -222,7 +235,7 @@ contract Stake is Ownable, IERC1155Receiver {
         uint256,
         bytes calldata
     ) external virtual override returns (bytes4) {
-        return IERC1155Receiver.onERC1155Received.selector;
+        return IERC1155ReceiverUpgradeable.onERC1155Received.selector;
     }
     function onERC1155BatchReceived(
         address,
@@ -231,10 +244,10 @@ contract Stake is Ownable, IERC1155Receiver {
         uint256[] calldata,
         bytes calldata
     ) external virtual override returns (bytes4) {
-        return IERC1155Receiver.onERC1155BatchReceived.selector;
+        return IERC1155ReceiverUpgradeable.onERC1155BatchReceived.selector;
     }
 
     function supportsInterface(bytes4 interfaceId) external virtual override view returns (bool){
-        return interfaceId == type(IERC165).interfaceId;
+        return interfaceId == type(IERC165Upgradeable).interfaceId;
     }
 }

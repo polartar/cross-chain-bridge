@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 interface IFuseBlock {
     function getRequirementStatus(uint256 _tokenId) external view returns(bool);
 }
 
-contract Item is ERC1155, Ownable{
+contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     struct ItemInfo {
         string itemUUID;
         uint256 auraAmount;
@@ -23,8 +23,8 @@ contract Item is ERC1155, Ownable{
         address receiver;
     }
 
-    using Counters for Counters.Counter;
-    Counters.Counter public _tokenIdCounter;
+    using CountersUpgradeable for CountersUpgradeable.Counter;
+    CountersUpgradeable.Counter public _tokenIdCounter;
 
     address public auraAddress;
     address public fuseBlockAddress;
@@ -34,11 +34,24 @@ contract Item is ERC1155, Ownable{
     // itemId => fuseBlockId
     mapping(uint256 => uint256) fuseBlockIds;
 
-    constructor (address _auraAddress, address _fuseBlockAddress) ERC1155 ("") {
+    // constructor (address _auraAddress, address _fuseBlockAddress) ERC1155 ("") {
+    //     auraAddress = _auraAddress;
+    //     fuseBlockAddress = _fuseBlockAddress;
+    //     _tokenIdCounter.increment();
+    // }
+
+    function initialize(address _auraAddress, address _fuseBlockAddress) public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+
+        __ERC1155_init("");
+        
         auraAddress = _auraAddress;
         fuseBlockAddress = _fuseBlockAddress;
         _tokenIdCounter.increment();
     }
+
+    function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
     modifier onlyFuseBlock() {
         require(msg.sender == fuseBlockAddress);
@@ -62,7 +75,7 @@ contract Item is ERC1155, Ownable{
     function cancelItems(uint256 _fuseBlockId) external onlyFuseBlock {
         //return back aura to fuseblock
         FuseBlockInfo memory fuseBlockItem = fuseBlockItems[_fuseBlockId];
-        IERC20(auraAddress).transfer(tx.origin, fuseBlockItem.auraAmount);
+        IERC20Upgradeable(auraAddress).transfer(tx.origin, fuseBlockItem.auraAmount);
         _burnBatch(fuseBlockItem.receiver, fuseBlockItem.itemIds, fuseBlockItem.itemAmounts);
     }
 

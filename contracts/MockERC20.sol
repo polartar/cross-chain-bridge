@@ -1,17 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MockERC20 is ERC20, Ownable {
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
+contract MockERC20 is UUPSUpgradeable, ERC20Upgradeable, OwnableUpgradeable {
     address fuseBlockAddress;
     address itemAddress;
     address stakeAddress;
 
-    constructor () ERC20 ("Test", "TT") {
+    function initialize() public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+
+        __ERC20_init("Aura Token", "AU");
+        
         _mint(msg.sender, 100000000 * (10 ** 18));
     }
+
+    function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
     function mint(uint256 _amount) public onlyOwner {
         _mint(msg.sender, _amount);

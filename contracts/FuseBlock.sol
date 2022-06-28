@@ -1,19 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+
+// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/utils/Counters.sol";
 
 interface IItem {
     function mint(uint256 _fuseBlockId, address _address, string memory _tokenId, uint256 _quantity, uint256 _auraAmount) external;
     function cancelItems(uint256 _fuseBlockId) external;
 }
 
-contract FuseBlock is ERC721, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter public _tokenIdCounter;
+contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
+    using CountersUpgradeable for CountersUpgradeable.Counter;
+    CountersUpgradeable.Counter public _tokenIdCounter;
 
     address public auraAddress;
     mapping(uint256 => uint256) auraAmounts;
@@ -26,12 +32,19 @@ contract FuseBlock is ERC721, Ownable {
 
     address itemAddress;
 
-    constructor (address _auraAddress) ERC721 ("Infuse NFT", "NFT") {
+    function initialize(address _auraAddress) public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+
+        __ERC721_init("Infuse NFT", "NFT");
+        
         auraAddress = _auraAddress;
         _tokenIdCounter.increment();
         minAuraAmount = 2 ether;
         rate = 100;
     }
+
+    function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
     function setItemAddress(address _newItemAddress) external onlyOwner {
         itemAddress = _newItemAddress;
@@ -42,7 +55,7 @@ contract FuseBlock is ERC721, Ownable {
     }
 
     function _getTotalAuraAmount() private view returns(uint256) {
-        return IERC20(auraAddress).balanceOf(address(this));
+        return IERC20Upgradeable(auraAddress).balanceOf(address(this));
     }
 
     function setRealAuraAddress(address _newAuraAddress, uint16 _rate) external onlyOwner {
@@ -61,24 +74,11 @@ contract FuseBlock is ERC721, Ownable {
     function mint(address _address, uint256 _auraAmount) public onlyOwner{
         require(_auraAmount >= minAuraAmount, "should include minimum aura");
         uint256 tokenId = _tokenIdCounter.current();
-        IERC20(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
+        IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
         _safeMint(_address, tokenId);
         auraAmounts[tokenId] = _auraAmount;
         _tokenIdCounter.increment();
     }
-
-    // mint fuseBlock with Aura
-    // function purchase(uint256 _auraAmount) public {
-    //     require(_auraAmount >= minAuraAmount, "should include minimum aura");
-    //     // require(totalReleasedAmount <= _getTotalAuraAmount(), "not enough aura amount");
-    //     uint256 tokenId = _tokenIdCounter.current();
-    //     IERC20(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
-    //     _safeMint(msg.sender, tokenId);
-    //     auraAmounts[tokenId] = _auraAmount;
-    //     _tokenIdCounter.increment();
-
-    //     meetRequirements[tokenId] = true;
-    // }
 
     // get requirement status
     function getRequirementStatus(uint256 _tokenId) public view returns(bool) {
@@ -105,14 +105,9 @@ contract FuseBlock is ERC721, Ownable {
         require(auraAmounts[_fuseBlockId] >= _totalAmount, "insufficient aura balance");
         auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
 
-        IERC20(auraAddress).transfer(itemAddress, _totalAmount);
+        IERC20Upgradeable(auraAddress).transfer(itemAddress, _totalAmount);
         IItem(itemAddress).mint(_fuseBlockId, msg.sender, _itemUUID, _quantity, _auraAmount);
     }
-
-    // function setRate(uint16 _rate) external onlyOwner {
-    //     require(_rate > 0 && _rate <= 100, "rate should be within 1-100");
-    //     rate = _rate;
-    // }
 
     function _calculateRealAuraAmount(uint256 _amount) private view returns(uint256) {
         if (isRealAura) {
@@ -151,7 +146,7 @@ contract FuseBlock is ERC721, Ownable {
         uint256 amount = getAuraAmount(_tokenId);
         
         auraAmounts[_tokenId] = 0;
-        IERC20(auraAddress).transfer(msg.sender, amount);
+        IERC20Upgradeable(auraAddress).transfer(msg.sender, amount);
         _burn(_tokenId);
     }
 
@@ -162,7 +157,7 @@ contract FuseBlock is ERC721, Ownable {
     function tokenURI(uint _tokenId) public view virtual override returns (string memory) {
       require(_exists(_tokenId),"ERC721Metadata: URI query for nonexistent token");
 
-      string memory _tokenURI = string(abi.encodePacked(baseURI, "?tokenId=", Strings.toString(_tokenId)));
+      string memory _tokenURI = string(abi.encodePacked(baseURI, "?tokenId=", StringsUpgradeable.toString(_tokenId)));
 
       return _tokenURI;
     }
