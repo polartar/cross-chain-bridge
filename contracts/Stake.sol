@@ -43,17 +43,11 @@ contract Stake is UUPSUpgradeable, OwnableUpgradeable, IERC1155ReceiverUpgradeab
     address public fuseBlockAddress;
     address public itemAddress;
     address public auraAddress;
-    uint256 rewardInterval = 1 hours;
+    uint256 rewardInterval;
 
     address royaltyReceiver;
     uint256 royaltyFraction;
     uint256 constant FEE_DENOMINATOR = 10000;
-
-    // constructor (address _fuseBlockAddress, address _itemAddress, address _auraAddress)  {
-    //     fuseBlockAddress = _fuseBlockAddress;
-    //     itemAddress = _itemAddress;
-    //     auraAddress = _auraAddress;
-    // }
 
     function initialize(address _fuseBlockAddress, address _itemAddress, address _auraAddress) public initializer {
         __Ownable_init();
@@ -62,6 +56,7 @@ contract Stake is UUPSUpgradeable, OwnableUpgradeable, IERC1155ReceiverUpgradeab
         fuseBlockAddress = _fuseBlockAddress;
         itemAddress = _itemAddress;
         auraAddress = _auraAddress;
+        rewardInterval = 1 hours;
     }
 
     function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}

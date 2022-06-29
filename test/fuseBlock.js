@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { parseEther } = require("ethers/lib/utils");
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 
 describe("FuseBlock", function () {
   let FuseBlock;
@@ -18,13 +18,19 @@ describe("FuseBlock", function () {
     Item = await ethers.getContractFactory("Item");
   })
   beforeEach(async function() {
-    mockAura = await MockAura.deploy();
+    mockAura = await upgrades.deployProxy(MockAura, [], {
+      kind: "uups"
+    });
     await mockAura.deployed();
 
-    fuseBlock = await FuseBlock.deploy(mockAura.address);
+    fuseBlock = await upgrades.deployProxy(FuseBlock, [mockAura.address], {
+      kind: "uups"
+    });
     await fuseBlock.deployed();
     
-    item = await Item.deploy(mockAura.address, fuseBlock.address);
+    item = await upgrades.deployProxy(Item, [mockAura.address, fuseBlock.address], {
+      kind: "uups"
+    })
     await item.deployed();
 
     // await mockAura.transfer(fuseBlock.address, parseEther("1000"));

@@ -1,22 +1,27 @@
 const hre = require("hardhat");
 
 async function main() {
-  // const Item = await hre.ethers.getContractFactory("Item");
-  // const item = await Item.deploy("0x74d75261Ab56d752E2c7AE6298E58Cd2f0D70B5a", "0xe9E4724997447B6C76494Fa1b44F05A490eD6A57");
+  const { upgrades } = hre;
+  const { fuseBlockAddress, auraAddress } = hre.config.networks[hre.network.name];
 
-  // await item.deployed();
+  const Item = await hre.ethers.getContractFactory("Item");
+  const item = await upgrades.upgradeProxy(Item, [auraAddress, fuseBlockAddress], {
+    kind: "uups"
+  })
 
-  // console.log("Item deployed to:", item.address); 
+  await item.deployed();
+
+  console.log("Item deployed to:", item.address); 
 
    
-  await hre.run("verify:verify", {
-    address: "0xB93518b3Bdc91d5bB9613b1724Ed7FB03862E669",
-    contract: "contracts/Item.sol:Item",
-    constructorArguments: [
-      "0x74d75261Ab56d752E2c7AE6298E58Cd2f0D70B5a",
-      "0xe9E4724997447B6C76494Fa1b44F05A490eD6A57"
-    ]
-  });
+  // await hre.run("verify:verify", {
+  //   address: "0xB93518b3Bdc91d5bB9613b1724Ed7FB03862E669",
+  //   contract: "contracts/Item.sol:Item",
+  //   constructorArguments: [
+  //     auraAddress,
+  //     fuseBlockAddress
+  //   ]
+  // });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

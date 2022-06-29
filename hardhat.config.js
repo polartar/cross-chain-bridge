@@ -44,7 +44,10 @@ module.exports = {
     },
     matic: {
       url: "https://rpc-mainnet.maticvigil.com",
-      accounts: [process.env.PRIVATE_KEY]
+      accounts: [process.env.PRIVATE_KEY],
+      auraAddress: "",
+      fuseBlockAddress: "",
+      itemAddress: ""
     },
     mumbai: {
       // url: "https://rpc-mumbai.maticvigil.com",
@@ -52,6 +55,9 @@ module.exports = {
       url: "https://rpc-mumbai.maticvigil.com/v1/f0ee4a1388582453bd9371fd6378578b976f21b8",
       // url: "https://rpc-mumbai.maticvigil.today/",
       accounts: [process.env.PRIVATE_KEY],
+      auraAddress: "",
+      fuseBlockAddress: "",
+      itemAddress: ""
     },
     avalanche : {
       url: "https://api.avax.network/ext/bc/C/rpc"
