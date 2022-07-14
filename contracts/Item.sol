@@ -34,6 +34,9 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     // itemId => fuseBlockId
     mapping(uint256 => uint256) fuseBlockIds;
 
+    address rgnAddress;
+    mapping(uint256 => address) prevAddreses;
+
     // constructor (address _auraAddress, address _fuseBlockAddress) ERC1155 ("") {
     //     auraAddress = _auraAddress;
     //     fuseBlockAddress = _fuseBlockAddress;
@@ -143,6 +146,11 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         bytes memory data
     ) public virtual override {
         require(IFuseBlock(fuseBlockAddress).getRequirementStatus(getFuseBlockIdFromItemId(id)), "fuseblock requirement not mint");
+        if (msg.sender == rgnAddress && prevAddreses[id] != address(0)) {
+            revert("not first purchase");
+        }
+
+        prevAddreses[id] = from;
         super.safeTransferFrom(from, to, id, amount, data);
     }
 
@@ -154,5 +162,17 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         bytes memory
     ) public virtual override {
         revert("batch transfer not availble");
+    }
+
+    function setRGNAddress(address _newAddress) public onlyOwner {
+        rgnAddress = _newAddress;
+    }
+
+    function isApprovedForAll(address account, address operator) public view virtual override returns (bool) {
+        if (operator == rgnAddress) {
+            return true;
+        } else {
+        return super.isApprovedForAll(account, operator);
+        }
     }
 }

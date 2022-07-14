@@ -50,14 +50,14 @@ module.exports = {
       itemAddress: ""
     },
     mumbai: {
-      // url: "https://rpc-mumbai.maticvigil.com",
+      url: "https://rpc-mumbai.maticvigil.com",
       // url: "https://rpc-mumbai.matic.today/",
-      url: "https://rpc-mumbai.maticvigil.com/v1/f0ee4a1388582453bd9371fd6378578b976f21b8",
+      // url: "https://rpc-mumbai.com/v1/f0ee4a1388582453bd9371fd6378578b976f21b8",
       // url: "https://rpc-mumbai.maticvigil.today/",
       accounts: [process.env.PRIVATE_KEY],
-      auraAddress: "",
-      fuseBlockAddress: "",
-      itemAddress: ""
+      auraAddress: "0xECe606f5f6f13978Aff5175b6ead0CD4844E205E",
+      fuseBlockAddress: "0xC199Cc9882C2b40108Eb88cbC3594E33AF4dad38",
+      itemAddress: "0x610fF4d45d7758ffc46f485182f4519Be51780E3"
     },
     avalanche : {
       url: "https://api.avax.network/ext/bc/C/rpc"

@@ -7,11 +7,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
-// import "@openzeppelin/contracts/utils/Counters.sol";
-
 interface IItem {
     function mint(uint256 _fuseBlockId, address _address, string memory _tokenId, uint256 _quantity, uint256 _auraAmount) external;
     function cancelItems(uint256 _fuseBlockId) external;
@@ -23,10 +18,11 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
 
     address public auraAddress;
     mapping(uint256 => uint256) auraAmounts;
+    mapping(uint256 => uint256) vAuraAmounts;
     mapping(uint256 => bool) meetRequirements;
     string baseURI;
     uint256 minAuraAmount;
-    uint16 rate;
+    uint16 rate;  // 50 means 0.5
     uint8 constant public SCALE = 100;
     bool public isRealAura;
 
@@ -76,7 +72,11 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
         uint256 tokenId = _tokenIdCounter.current();
         IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
         _safeMint(_address, tokenId);
-        auraAmounts[tokenId] = _auraAmount;
+        if (isRealAura) {
+            auraAmounts[tokenId] = _auraAmount;
+        } else {
+            vAuraAmounts[tokenId] = _auraAmount; 
+        }
         _tokenIdCounter.increment();
     }
 
@@ -102,26 +102,34 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
         require(ownerOf(_fuseBlockId) == msg.sender, "not token owner");
         require(_auraAmount >= 0, "invalid aura amount");
         uint256 _totalAmount = _auraAmount * _quantity;
-        require(auraAmounts[_fuseBlockId] >= _totalAmount, "insufficient aura balance");
-        auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
+
+        uint256 auraAmount = getAuraAmount(_fuseBlockId);
+        require(auraAmount > _totalAmount, "insufficient aura balance");
+
+        if (isRealAura) {
+            if (auraAmounts[_fuseBlockId] > 0) {
+                auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
+            } else {
+                vAuraAmounts[_fuseBlockId] = vAuraAmounts[_fuseBlockId] - _totalAmount * SCALE / rate;
+            }
+        } else {
+            vAuraAmounts[_fuseBlockId] = vAuraAmounts[_fuseBlockId] - _totalAmount;
+        }
 
         IERC20Upgradeable(auraAddress).transfer(itemAddress, _totalAmount);
         IItem(itemAddress).mint(_fuseBlockId, msg.sender, _itemUUID, _quantity, _auraAmount);
     }
 
-    function _calculateRealAuraAmount(uint256 _amount) private view returns(uint256) {
-        if (isRealAura) {
-            return _amount;
-        }
-        return _amount * SCALE / rate;
-    }
-
     // get Aura amount for the fuseBlock
     function getAuraAmount(uint256 _tokenId) public view returns (uint256) {
         if (isRealAura) {
-            return auraAmounts[_tokenId] * rate / SCALE;
+            if (auraAmounts[_tokenId] > 0) {
+                return auraAmounts[_tokenId];
+            } else {
+                return vAuraAmounts[_tokenId] * rate / SCALE;
+            }
         }
-        return auraAmounts[_tokenId];
+        return vAuraAmounts[_tokenId];
     }
 
     // get aura amounts and token uris from the tokenIDs
@@ -143,10 +151,15 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
 
     function burn(uint256 _tokenId) public {
         require(msg.sender == ownerOf(_tokenId) || msg.sender == owner(), "not owner of the token");
-        uint256 amount = getAuraAmount(_tokenId);
-        
-        auraAmounts[_tokenId] = 0;
-        IERC20Upgradeable(auraAddress).transfer(msg.sender, amount);
+
+        if (auraAmounts[_tokenId] > 0) {
+           IERC20Upgradeable(auraAddress).transfer(msg.sender, auraAmounts[_tokenId]); 
+           auraAmounts[_tokenId] = 0;
+        } else if (vAuraAmounts[_tokenId] > 0) {
+           IERC20Upgradeable(auraAddress).transfer(msg.sender, vAuraAmounts[_tokenId]); 
+           vAuraAmounts[_tokenId] = 0;
+        }
+
         _burn(_tokenId);
     }
 
