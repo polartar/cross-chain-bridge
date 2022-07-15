@@ -111,6 +111,10 @@ describe("FuseBlock", function () {
     await fuseBlock.setRealAuraAddress(mockAura.address, 50); // set the $karma:$aura = 1: 0.5;
     const realamount = await fuseBlock.getAuraAmount(1);
     expect(realamount).to.be.equal(parseEther("50"));
+
+    await fuseBlock.mint(admin.address, parseEther("100"));
+    const amount1 = await fuseBlock.getAuraAmount(2);
+    expect(amount1).to.be.equal(parseEther("100"));
   });
 
   it("Should mint item from fuseBlock", async function () {
