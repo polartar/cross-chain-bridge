@@ -35,7 +35,6 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     mapping(uint256 => uint256) fuseBlockIds;
 
     address rgnAddress;
-    mapping(uint256 => address) prevAddreses;
 
     // constructor (address _auraAddress, address _fuseBlockAddress) ERC1155 ("") {
     //     auraAddress = _auraAddress;
@@ -146,11 +145,7 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         bytes memory data
     ) public virtual override {
         require(IFuseBlock(fuseBlockAddress).getRequirementStatus(getFuseBlockIdFromItemId(id)), "fuseblock requirement not mint");
-        if (msg.sender == rgnAddress && prevAddreses[id] != address(0)) {
-            revert("not first purchase");
-        }
-
-        prevAddreses[id] = from;
+       
         super.safeTransferFrom(from, to, id, amount, data);
     }
 

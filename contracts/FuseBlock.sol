@@ -18,7 +18,6 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
 
     address public auraAddress;
     mapping(uint256 => uint256) auraAmounts;
-    mapping(uint256 => uint256) vAuraAmounts;
     mapping(uint256 => bool) meetRequirements;
     string baseURI;
     uint256 minAuraAmount;
@@ -27,6 +26,7 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
     bool public isRealAura;
 
     address itemAddress;
+    mapping(uint256 => uint256) vAuraAmounts;
 
     function initialize(address _auraAddress) public initializer {
         __Ownable_init();
@@ -73,9 +73,9 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
         IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount);
         _safeMint(_address, tokenId);
         if (isRealAura) {
-            auraAmounts[tokenId] = _auraAmount;
+            vAuraAmounts[tokenId] = _auraAmount;
         } else {
-            vAuraAmounts[tokenId] = _auraAmount; 
+            auraAmounts[tokenId] = _auraAmount; 
         }
         _tokenIdCounter.increment();
     }
@@ -107,13 +107,13 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
         require(auraAmount > _totalAmount, "insufficient aura balance");
 
         if (isRealAura) {
-            if (auraAmounts[_fuseBlockId] > 0) {
-                auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
+            if (vAuraAmounts[_fuseBlockId] > 0) {
+                vAuraAmounts[_fuseBlockId] = vAuraAmounts[_fuseBlockId] - _totalAmount;
             } else {
-                vAuraAmounts[_fuseBlockId] = vAuraAmounts[_fuseBlockId] - _totalAmount * SCALE / rate;
+                auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount * SCALE / rate;
             }
         } else {
-            vAuraAmounts[_fuseBlockId] = vAuraAmounts[_fuseBlockId] - _totalAmount;
+            auraAmounts[_fuseBlockId] = auraAmounts[_fuseBlockId] - _totalAmount;
         }
 
         IERC20Upgradeable(auraAddress).transfer(itemAddress, _totalAmount);
@@ -123,13 +123,13 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
     // get Aura amount for the fuseBlock
     function getAuraAmount(uint256 _tokenId) public view returns (uint256) {
         if (isRealAura) {
-            if (auraAmounts[_tokenId] > 0) {
-                return auraAmounts[_tokenId];
+            if (vAuraAmounts[_tokenId] > 0) {
+                return vAuraAmounts[_tokenId];
             } else {
-                return vAuraAmounts[_tokenId] * rate / SCALE;
+                return auraAmounts[_tokenId] * rate / SCALE;
             }
         }
-        return vAuraAmounts[_tokenId];
+        return auraAmounts[_tokenId];
     }
 
     // get aura amounts and token uris from the tokenIDs

@@ -2,22 +2,23 @@ const hre = require("hardhat");
 
 async function main() {
   // We get the contract to deploy
-  const { upgrades } = hre;
-  const MockAura = await hre.ethers.getContractFactory("MockERC20");
-  const mockAura = await upgrades.deployProxy(MockAura, [], {
-    kind: "uups"
-  })
+  // const { upgrades } = hre;
+  // const MockAura = await hre.ethers.getContractFactory("MockERC20");
+  // const mockAura = await upgrades.deployProxy(MockAura, [], {
+  //   kind: "uups"
+  // })
 
-  await mockAura.deployed();
+  // await mockAura.deployed();
 
-  console.log("Aura address: ", mockAura.address);  
+  // console.log("Aura address: ", mockAura.address);  
 
   const FuseBlock = await hre.ethers.getContractFactory("FuseBlock");
-  const fuseBlock = await upgrades.deployProxy(FuseBlock, [mockAura.address], {
-    kind: "uups"
-  })
+  const fuseBlock = await upgrades.upgradeProxy("0xC199Cc9882C2b40108Eb88cbC3594E33AF4dad38", FuseBlock) 
+  // const fuseBlock = await upgrades.deployProxy(FuseBlock, [mockAura.address], {
+  //   kind: "uups"
+  // })
 
-  await fuseBlock.deployed();
+  // await fuseBlock.deployed();
 
   console.log("FuseBlock deployed to:", fuseBlock.address); 
   
