@@ -10,6 +10,7 @@ async function main() {
   })
 
   await item.deployed();
+  await item.setRGNAddress("0x4c6348bf16FeA56F3DE86553c0653b817bca799A");
 
   console.log("Item deployed to:", item.address); 
 

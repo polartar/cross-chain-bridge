@@ -104,7 +104,7 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
         uint256 _totalAmount = _auraAmount * _quantity;
 
         uint256 auraAmount = getAuraAmount(_fuseBlockId);
-        require(auraAmount > _totalAmount, "insufficient aura balance");
+        require(auraAmount >= _totalAmount, "insufficient aura balance");
 
         if (isRealAura) {
             if (vAuraAmounts[_fuseBlockId] > 0) {

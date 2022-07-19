@@ -32,13 +32,13 @@ async function main() {
   await fuseBlock.setItemAddress(itemAddress);
 
   await fuseBlock.setApprovalForAll(stake.address, true);
-  await mockAura.transfer(stake.address, parseEther("10000000"));
+  await mockAura.transfer(stake.address, parseEther("100000000"));
   await mockAura.approve(stake.address, ethers.constants.MaxUint256);
 
   const item = await Item.attach(itemAddress);
   await item.setApprovalForAll(stake.address, true);
   // await hre.run("verify:verify", {
-  //   address: "0xC38d5f57E0d3ff4E6D7952DF43398B9418c27c0d",
+  //   address: "0x479644b1c2fbbB1713ef56038b26292609554189",
   //   contract: "contracts/Stake.sol:Stake",
   //   constructorArguments: [
   //       "0xe9E4724997447B6C76494Fa1b44F05A490eD6A57",

@@ -45,9 +45,10 @@ module.exports = {
     matic: {
       url: "https://rpc-mainnet.maticvigil.com",
       accounts: [process.env.PRIVATE_KEY],
-      auraAddress: "",
-      fuseBlockAddress: "",
-      itemAddress: ""
+      auraAddress: "0xbDDCc0E86564B4A8Eb1df352CFb2B7629488Dd96",
+      fuseBlockAddress: "0x95959432293943D77Ed3e2eA065E9D65A21d0227",
+      itemAddress: "0x668d923D4be2ffF8EC7645a1E5Cebb57102493Ba",
+      stakeAddress: "0x479644b1c2fbbB1713ef56038b26292609554189"
     },
     mumbai: {
       url: "https://rpc-mumbai.maticvigil.com",
@@ -55,9 +56,9 @@ module.exports = {
       // url: "https://rpc-mumbai.com/v1/f0ee4a1388582453bd9371fd6378578b976f21b8",
       // url: "https://rpc-mumbai.maticvigil.today/",
       accounts: [process.env.PRIVATE_KEY],
-      auraAddress: "0xECe606f5f6f13978Aff5175b6ead0CD4844E205E",
-      fuseBlockAddress: "0xC199Cc9882C2b40108Eb88cbC3594E33AF4dad38",
-      itemAddress: "0x610fF4d45d7758ffc46f485182f4519Be51780E3"
+      auraAddress: "0x03862b4fC815bf15Aa442C58F090F4D8aC739649",
+      fuseBlockAddress: "0xadab77264f77EE0871eD0ecf8Fec2cBC167A8E3E",
+      itemAddress: "0xF77C50F688ccCd5936E77f9dc5fA72234dB29610"
     },
     avalanche : {
       url: "https://api.avax.network/ext/bc/C/rpc"
