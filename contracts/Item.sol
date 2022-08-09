@@ -81,7 +81,7 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         _burnBatch(fuseBlockItem.receiver, fuseBlockItem.itemIds, fuseBlockItem.itemAmounts);
     }
 
-    function mint(uint256 _fuseBlockId, address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyFuseBlock{
+    function mint(uint256 _fuseBlockId, address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyFuseBlock {
         require(_quantity > 0, "invalid quantity");
         require(_auraAmount > 0, "invalid aura amount");
 
@@ -144,7 +144,9 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         uint256 amount,
         bytes memory data
     ) public virtual override {
-        require(IFuseBlock(fuseBlockAddress).getRequirementStatus(getFuseBlockIdFromItemId(id)), "fuseblock requirement not mint");
+        if (getFuseBlockIdFromItemId(id) != 0) {
+            require(IFuseBlock(fuseBlockAddress).getRequirementStatus(getFuseBlockIdFromItemId(id)), "fuseblock requirement not mint");
+        }
        
         super.safeTransferFrom(from, to, id, amount, data);
     }
@@ -168,6 +170,50 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
             return true;
         } else {
         return super.isApprovedForAll(account, operator);
+        }
+    }
+
+    function infusedMint(address _receiver, string memory _itemUUID, uint256[] calldata _itemIds) public onlyOwner{
+        uint256 len = _itemIds.length;
+        require(len > 0, "invalid item count");
+        uint256 amount;
+        for (uint256 i = 0; i < len;) {
+            if (getAuraAmount(_itemIds[i]) != 0) {
+                amount += getAuraAmount(_itemIds[i]);
+                removeItemFromFuseBlock(_itemIds[i]);
+            } else {
+                revert("invalid item id");
+            }
+            unchecked {
+                ++i;
+            }
+        }
+        
+
+        uint256 tokenId = _tokenIdCounter.current();
+        _mint(_receiver, tokenId, 1, "");
+        _tokenIdCounter.increment();
+
+        items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: amount});
+    }
+
+    function removeItemFromFuseBlock(uint256 _itemId) private {
+        uint256 fuseBlockId = getFuseBlockIdFromItemId(_itemId);  
+        FuseBlockInfo storage fuseBlockInfo = fuseBlockItems[fuseBlockId];
+
+        fuseBlockInfo.auraAmount -= getAuraAmount(_itemId);
+        uint256 len = fuseBlockInfo.itemIds.length;
+        for (uint256 i = 0; i < len;) {
+            if (fuseBlockInfo.itemIds[i] == _itemId) {
+                require(fuseBlockInfo.itemAmounts[i] >= 1, "already fused");
+                fuseBlockInfo.itemAmounts[i] -= 1;
+                if (fuseBlockInfo.itemAmounts[i] == 0) {
+                    delete fuseBlockInfo.itemAmounts[i];
+                }
+            } 
+            unchecked {
+                ++i;
+            }
         }
     }
 }
