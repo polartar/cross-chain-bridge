@@ -158,4 +158,44 @@ describe("FuseBlock", function () {
     expect(await item.balanceOf(user1.address, 1)).to.be.equal(1);
   });
 
+  it("Should infuse items", async function () {
+    await fuseBlock.mint(user.address, parseEther("100"));
+    await fuseBlock.mint(user.address, parseEther("100"));
+
+    await fuseBlock.connect(user).mintItem(1, "item 1", 2, parseEther("9"))
+    await fuseBlock.connect(user).mintItem(2, "item 2", 1, parseEther("8"));
+    
+    let items = await item.getItemsFromFuseBlock(1);
+    expect(items.auraAmount).to.be.equal(parseEther("18"));
+    expect(items.itemAmounts[0]).to.be.equal(2);
+    expect(await item.balanceOf(user.address, 1)).to.be.equal(2);
+    expect(await item.balanceOf(user.address, 2)).to.be.equal(1);
+
+    await item.infusedMint(user.address, 'new item', [1,2]);
+
+    // it("Should fuse aura", async function () {
+      expect(await item.getAuraAmount(3)).to.be.equal(parseEther("17"));
+    // })
+   
+    // it("Should remove the relations from the fuseBlock", async function () {
+      items = await item.getItemsFromFuseBlock(1);
+      expect(items.auraAmount).to.be.equal(parseEther("9"));
+      expect(items.itemAmounts[0]).to.be.equal(1);
+      
+      items = await item.getItemsFromFuseBlock(2);
+      expect(items.auraAmount).to.be.equal(parseEther("0"));
+      expect(items.itemAmounts[0]).to.be.equal(0);
+      expect(items.itemIds[0]).to.be.equal(0);
+    // })
+    
+    // it("Should burn the old items", async function () {
+      expect(await item.balanceOf(user.address, 1)).to.be.equal(1);
+      expect(await item.balanceOf(user.address, 2)).to.be.equal(0);
+    // })
+    
+    // it("Should return 0 aura amount for burned item", async function () {
+      expect(await item.getAuraAmount(2)).to.be.equal(0);
+    // })
+  });
+
 });

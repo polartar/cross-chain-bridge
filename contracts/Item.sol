@@ -188,7 +188,6 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
                 ++i;
             }
         }
-        
 
         uint256 tokenId = _tokenIdCounter.current();
         _mint(_receiver, tokenId, 1, "");
@@ -201,15 +200,18 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         uint256 fuseBlockId = getFuseBlockIdFromItemId(_itemId);  
         FuseBlockInfo storage fuseBlockInfo = fuseBlockItems[fuseBlockId];
 
+        _burn(fuseBlockInfo.receiver, _itemId, 1);
+
         fuseBlockInfo.auraAmount -= getAuraAmount(_itemId);
         uint256 len = fuseBlockInfo.itemIds.length;
         for (uint256 i = 0; i < len;) {
             if (fuseBlockInfo.itemIds[i] == _itemId) {
-                require(fuseBlockInfo.itemAmounts[i] >= 1, "already fused");
+                require(fuseBlockInfo.itemAmounts[i] >= 1, "item already destroyed");
                 fuseBlockInfo.itemAmounts[i] -= 1;
                 if (fuseBlockInfo.itemAmounts[i] == 0) {
-                    delete fuseBlockInfo.itemAmounts[i];
-                }
+                    delete fuseBlockInfo.itemIds[i];
+                    delete items[_itemId];
+                } 
             } 
             unchecked {
                 ++i;
