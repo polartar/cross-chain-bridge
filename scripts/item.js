@@ -5,18 +5,22 @@ async function main() {
   const { fuseBlockAddress, auraAddress } = hre.config.networks[hre.network.name];
 
   const Item = await hre.ethers.getContractFactory("Item");
-  const item = await upgrades.deployProxy(Item, [auraAddress, fuseBlockAddress], {
-    kind: "uups"
-  })
+  // const item = await upgrades.deployProxy(Item, [auraAddress, fuseBlockAddress], {
+  //   kind: "uups"
+  // })
 
-  await item.deployed();
-  await item.setRGNAddress("0x4c6348bf16FeA56F3DE86553c0653b817bca799A");
+  // await item.deployed();
+  // // await item.setRGNAddress("0x4c6348bf16FeA56F3DE86553c0653b817bca799A");
 
-  console.log("Item deployed to:", item.address); 
+  // console.log("Item deployed to:", item.address); 
 
-  // upgrade contract
-  // const upgrade = await upgrades.upgradeProxy("0xB93518b3Bdc91d5bB9613b1724Ed7FB03862E669", Item) 
-  // console.log(upgrade.address);
+  // upgrade script
+
+   const { itemAddress } = hre.config.networks[hre.network.name];
+
+  // // upgrade contract
+  const upgrade = await upgrades.upgradeProxy('0xF271A8749D026D4bb87405d4F31E30ebF40f787D', Item) 
+  console.log(upgrade.address);
   // await hre.run("verify:verify", {
   //   address: "0xB93518b3Bdc91d5bB9613b1724Ed7FB03862E669",
   //   contract: "contracts/Item.sol:Item",
