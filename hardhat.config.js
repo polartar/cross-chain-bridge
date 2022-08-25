@@ -51,9 +51,9 @@ module.exports = {
       stakeAddress: "0x479644b1c2fbbB1713ef56038b26292609554189"
     },
     mumbai: {
-      url: "https://rpc-mumbai.maticvigil.com",
+      // url: "https://rpc-mumbai.maticvigil.com",
       // url: "https://rpc-mumbai.matic.today/",
-      // url: "https://rpc-mumbai.com/v1/f0ee4a1388582453bd9371fd6378578b976f21b8",
+      url: "https://polygon-mumbai.g.alchemy.com/v2/18KJX-KHDh97qJqcKopVzyM4GBxKw1xz",
       // url: "https://rpc-mumbai.maticvigil.today/",
       accounts: [process.env.PRIVATE_KEY],
       auraAddress: "0x03862b4fC815bf15Aa442C58F090F4D8aC739649",

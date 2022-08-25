@@ -11,6 +11,7 @@ interface IFuseBlock {
 }
 
 contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
+    event Mint(address indexed to, uint256 id, uint256 value, string uuid);
     struct ItemInfo {
         string itemUUID;
         uint256 auraAmount;
@@ -35,12 +36,6 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     mapping(uint256 => uint256) fuseBlockIds;
 
     address rgnAddress;
-
-    // constructor (address _auraAddress, address _fuseBlockAddress) ERC1155 ("") {
-    //     auraAddress = _auraAddress;
-    //     fuseBlockAddress = _fuseBlockAddress;
-    //     _tokenIdCounter.increment();
-    // }
 
     function initialize(address _auraAddress, address _fuseBlockAddress) public initializer {
         __Ownable_init();
@@ -98,6 +93,8 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         
         items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount});
         fuseBlockIds[tokenId] = _fuseBlockId;
+
+        emit Mint(_receiver, tokenId, _quantity, _itemUUID);
     }
 
     function updateAuraAddress(address _newAuraAddress) external onlyOwner {
@@ -194,6 +191,7 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         _tokenIdCounter.increment();
 
         items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: amount});
+        emit Mint(_receiver, tokenId, 1, _itemUUID);
     }
 
     function removeItemFromFuseBlock(uint256 _itemId) private {
@@ -217,5 +215,17 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
                 ++i;
             }
         }
+    }
+
+    function mintDirect(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyOwner{
+        require(_auraAmount > 0, "invalid aura amount");
+
+        uint256 tokenId = _tokenIdCounter.current();
+        _mint(_receiver, tokenId, _quantity, "");
+        _tokenIdCounter.increment();
+
+        items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount});
+        IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount * _quantity);
+        emit Mint(_receiver, tokenId, _quantity, _itemUUID);
     }
 }

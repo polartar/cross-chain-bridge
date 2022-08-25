@@ -19,7 +19,7 @@ async function main() {
    const { itemAddress } = hre.config.networks[hre.network.name];
 
   // // upgrade contract
-  const upgrade = await upgrades.upgradeProxy('0xF271A8749D026D4bb87405d4F31E30ebF40f787D', Item) 
+  const upgrade = await upgrades.upgradeProxy(itemAddress, Item) 
   console.log(upgrade.address);
   // await hre.run("verify:verify", {
   //   address: "0xB93518b3Bdc91d5bB9613b1724Ed7FB03862E669",
