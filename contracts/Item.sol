@@ -170,14 +170,19 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         }
     }
 
-    function infusedMint(address _receiver, string memory _itemUUID, uint256[] calldata _itemIds) public onlyOwner{
+    function _infusedMint(address _infuser, string memory _itemUUID, uint256[] calldata _itemIds, bool isBurn) private {
         uint256 len = _itemIds.length;
         require(len > 0, "invalid item count");
         uint256 amount;
         for (uint256 i = 0; i < len;) {
+            if (balanceOf(_infuser, _itemIds[i]) == 0) {
+                revert("not enough balance");
+            }
             if (getAuraAmount(_itemIds[i]) != 0) {
                 amount += getAuraAmount(_itemIds[i]);
-                removeItemFromFuseBlock(_itemIds[i]);
+                if (isBurn) {
+                    removeItemFromFuseBlock(_infuser, _itemIds[i]);
+                }
             } else {
                 revert("invalid item id");
             }
@@ -187,18 +192,25 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         }
 
         uint256 tokenId = _tokenIdCounter.current();
-        _mint(_receiver, tokenId, 1, "");
+        _mint(_infuser, tokenId, 1, "");
         _tokenIdCounter.increment();
 
         items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: amount});
-        emit Mint(_receiver, tokenId, 1, _itemUUID);
+        emit Mint(_infuser, tokenId, 1, _itemUUID);
     }
 
-    function removeItemFromFuseBlock(uint256 _itemId) private {
-        uint256 fuseBlockId = getFuseBlockIdFromItemId(_itemId);  
-        FuseBlockInfo storage fuseBlockInfo = fuseBlockItems[fuseBlockId];
+    function infusedMint(address _player, string memory _itemUUID, uint256[] calldata _itemIds, bool isBurn) public onlyOwner{
+        _infusedMint(_player, _itemUUID, _itemIds, isBurn);
+    }
 
-        _burn(fuseBlockInfo.receiver, _itemId, 1);
+    function removeItemFromFuseBlock(address _from, uint256 _itemId) private {
+        _burn(_from, _itemId, 1);
+
+        uint256 fuseBlockId = getFuseBlockIdFromItemId(_itemId);  
+        if (fuseBlockId == 0) {
+            return;
+        }
+        FuseBlockInfo storage fuseBlockInfo = fuseBlockItems[fuseBlockId];
 
         fuseBlockInfo.auraAmount -= getAuraAmount(_itemId);
         uint256 len = fuseBlockInfo.itemIds.length;
@@ -227,5 +239,9 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount});
         IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount * _quantity);
         emit Mint(_receiver, tokenId, _quantity, _itemUUID);
+    }
+
+    function infusedMintForPlayer(string memory _itemUUID, uint256[] calldata _itemIds, bool isBurn) public {
+        _infusedMint(msg.sender, _itemUUID, _itemIds, isBurn);
     }
 }

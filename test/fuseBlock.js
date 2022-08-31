@@ -171,7 +171,7 @@ describe("FuseBlock", function () {
     expect(await item.balanceOf(user.address, 1)).to.be.equal(2);
     expect(await item.balanceOf(user.address, 2)).to.be.equal(1);
 
-    await item.infusedMint(user.address, 'new item', [1,2]);
+    await item.infusedMint(user.address, 'new item', [1,2], true);
 
     // it("Should fuse aura", async function () {
       expect(await item.getAuraAmount(3)).to.be.equal(parseEther("17"));
