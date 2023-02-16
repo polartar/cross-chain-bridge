@@ -12,6 +12,8 @@ interface IFuseBlock {
 
 contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     event Mint(address indexed to, uint256 id, uint256 value, string uuid);
+    event MintDirect(address indexed to, uint256 id, uint256 value, string uuid, string data);
+    event InfusedMint(address indexed to, uint256 id, uint256 value, string uuid, bool isBurn);
     struct ItemInfo {
         string itemUUID;
         uint256 auraAmount;
@@ -170,7 +172,7 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         }
     }
 
-    function _infusedMint(address _infuser, string memory _itemUUID, uint256[] calldata _itemIds, bool isBurn) private {
+    function _infusedMint(address _infuser, string memory _itemUUID, uint256[] calldata _itemIds, bool _isBurn) private {
         uint256 len = _itemIds.length;
         require(len > 0, "invalid item count");
         uint256 amount;
@@ -180,7 +182,7 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
             }
             if (getAuraAmount(_itemIds[i]) != 0) {
                 amount += getAuraAmount(_itemIds[i]);
-                if (isBurn) {
+                if (_isBurn) {
                     removeItemFromFuseBlock(_infuser, _itemIds[i]);
                 }
             } else {
@@ -196,11 +198,11 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         _tokenIdCounter.increment();
 
         items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: amount});
-        emit Mint(_infuser, tokenId, 1, _itemUUID);
+        emit InfusedMint(_infuser, tokenId, 1, _itemUUID, _isBurn);
     }
 
-    function infusedMint(address _player, string memory _itemUUID, uint256[] calldata _itemIds, bool isBurn) public onlyOwner{
-        _infusedMint(_player, _itemUUID, _itemIds, isBurn);
+    function infusedMint(address _player, string memory _itemUUID, uint256[] calldata _itemIds, bool _isBurn) public onlyOwner{
+        _infusedMint(_player, _itemUUID, _itemIds, _isBurn);
     }
 
     function removeItemFromFuseBlock(address _from, uint256 _itemId) private {
@@ -230,6 +232,14 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     }
 
     function mintDirect(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyOwner{
+        _mintDirect(_receiver, _itemUUID, _quantity, _auraAmount, "");
+    }
+
+    function mintDirectWithData(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount, string memory data) public onlyOwner{
+        _mintDirect(_receiver, _itemUUID, _quantity, _auraAmount, data);
+    }
+
+    function _mintDirect(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount, string memory data) private{
         require(_auraAmount > 0, "invalid aura amount");
 
         uint256 tokenId = _tokenIdCounter.current();
@@ -238,10 +248,10 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
 
         items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount});
         IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount * _quantity);
-        emit Mint(_receiver, tokenId, _quantity, _itemUUID);
+        emit MintDirect(_receiver, tokenId, _quantity, _itemUUID, data);
     }
 
-    function infusedMintForPlayer(string memory _itemUUID, uint256[] calldata _itemIds, bool isBurn) public {
-        _infusedMint(msg.sender, _itemUUID, _itemIds, isBurn);
+    function infusedMintForPlayer(string memory _itemUUID, uint256[] calldata _itemIds, bool _isBurn) public {
+        _infusedMint(msg.sender, _itemUUID, _itemIds, _isBurn);
     }
 }

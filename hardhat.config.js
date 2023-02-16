@@ -43,7 +43,8 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY]
     },
     matic: {
-      url: "https://rpc-mainnet.maticvigil.com",
+      // url: "https://rpc-mainnet.maticvigil.com",
+       url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY_MATIC}`,
       accounts: [process.env.PRIVATE_KEY],
       auraAddress: "0xbDDCc0E86564B4A8Eb1df352CFb2B7629488Dd96",
       fuseBlockAddress: "0x95959432293943D77Ed3e2eA065E9D65A21d0227",
@@ -53,7 +54,7 @@ module.exports = {
     mumbai: {
       // url: "https://rpc-mumbai.maticvigil.com",
       // url: "https://rpc-mumbai.matic.today/",
-      url: "https://polygon-mumbai.g.alchemy.com/v2/18KJX-KHDh97qJqcKopVzyM4GBxKw1xz",
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_KEY_MUMBAI}`,
       // url: "https://rpc-mumbai.maticvigil.today/",
       accounts: [process.env.PRIVATE_KEY],
       auraAddress: "0x03862b4fC815bf15Aa442C58F090F4D8aC739649",

@@ -96,10 +96,9 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
         burn(_tokenId);
     }
 
-    // mint Item from fuseBlock
-    function mintItem(uint256 _fuseBlockId, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) external{
+    function _mintItem(uint256 _fuseBlockId, address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) private {
         require(itemAddress != address(0), "item NFT not set");
-        require(ownerOf(_fuseBlockId) == msg.sender, "not token owner");
+        require(ownerOf(_fuseBlockId) == _receiver, "not token owner");
         require(_auraAmount >= 0, "invalid aura amount");
         uint256 _totalAmount = _auraAmount * _quantity;
 
@@ -117,7 +116,17 @@ contract FuseBlock is UUPSUpgradeable, ERC721Upgradeable, OwnableUpgradeable {
         }
 
         IERC20Upgradeable(auraAddress).transfer(itemAddress, _totalAmount);
-        IItem(itemAddress).mint(_fuseBlockId, msg.sender, _itemUUID, _quantity, _auraAmount);
+        IItem(itemAddress).mint(_fuseBlockId, _receiver, _itemUUID, _quantity, _auraAmount);
+    }
+
+    // mint Item from fuseBlock
+    function mintItem(uint256 _fuseBlockId, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) external{
+         _mintItem(_fuseBlockId, msg.sender, _itemUUID, _quantity, _auraAmount);
+    }
+
+    // mint Item from fuseBlock
+    function mintItemWithOwner(uint256 _fuseBlockId, address _fuseBlockOwner, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) external onlyOwner{
+         _mintItem(_fuseBlockId, _fuseBlockOwner, _itemUUID, _quantity, _auraAmount);
     }
 
     // get Aura amount for the fuseBlock
