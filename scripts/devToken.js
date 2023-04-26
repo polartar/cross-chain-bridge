@@ -9,10 +9,10 @@ async function main() {
   // await devToken.deployed();
 
   // console.log("DevToken address: ", devToken.address);
-  //0x087A736312f87144AC86073F908c31349856066A
+  // //0x087A736312f87144AC86073F908c31349856066A
 
   await hre.run("verify:verify", {
-    address: "0x087A736312f87144AC86073F908c31349856066A",
+    address: "0x4dc1CC8Ae662f199819E01969b54C99A8879E842",
     contract: "contracts/DevToken.sol:DevToken",
     constructorArguments: [],
   });
