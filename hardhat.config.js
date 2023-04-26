@@ -78,6 +78,10 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
       chainId: 99999,
     },
+    zk_test: {
+      url: `https://polygonzkevm-testnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY_ZK_TEST}`,
+      accounts: [process.env.PRIVATE_KEY],
+    },
   },
   mocha: {
     timeout: 200000,
