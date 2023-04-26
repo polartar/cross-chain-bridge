@@ -81,6 +81,7 @@ module.exports = {
     zk_test: {
       url: `https://polygonzkevm-testnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY_ZK_TEST}`,
       accounts: [process.env.PRIVATE_KEY],
+      auraAddress: "0x4c16D9032560600Db5Bd1211965a2982be7e0fEA",
     },
   },
   mocha: {
