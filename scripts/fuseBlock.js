@@ -9,7 +9,7 @@ async function main() {
   });
 
   const tx1 = await mockAura.deployed();
-  await tx1.wait();
+  await tx1.deployTransaction.wait();
 
   console.log("Aura address: ", mockAura.address);
 
@@ -22,7 +22,7 @@ async function main() {
   const tx2 = await fuseBlock.deployed();
 
   console.log("FuseBlock deployed to:", fuseBlock.address);
-  await tx2.wait();
+  await tx2.deployTransaction.wait();
 
   await hre.run("verify:verify", {
     address: mockAura.address,

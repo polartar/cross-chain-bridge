@@ -57,9 +57,16 @@ module.exports = {
       url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_KEY_MUMBAI}`,
       // url: "https://rpc-mumbai.maticvigil.today/",
       accounts: [process.env.PRIVATE_KEY],
-      auraAddress: "0x03862b4fC815bf15Aa442C58F090F4D8aC739649",
-      fuseBlockAddress: "0xadab77264f77EE0871eD0ecf8Fec2cBC167A8E3E",
-      itemAddress: "0xF77C50F688ccCd5936E77f9dc5fA72234dB29610",
+      //stage
+      // auraAddress: "0x03862b4fC815bf15Aa442C58F090F4D8aC739649",
+      // fuseBlockAddress: "0xadab77264f77EE0871eD0ecf8Fec2cBC167A8E3E",
+      // itemAddress: "0xF77C50F688ccCd5936E77f9dc5fA72234dB29610",
+
+      // dev
+      auraAddress: "0x5210A32bC4d3aFf0C7596Fe592d28aE50F9b75fd",
+      fuseBlockAddress: "0xb137b694E05D0C2D2E4D40C3267e1f4007A73b73",
+      itemAddress: "0x90E45D789717c9A179F8DA5A8BDdd5c564E928fc",
+      stakeAddress: "0x7B7c18ecA83455da4181bB48D52285d92F1487fc",
     },
     "base-goerli": {
       url: `https://goerli.base.org`,

@@ -15,19 +15,25 @@ npx hardhat help
 ```
 
 ## Install the project
-   Clone this repo and run `npm install`
+
+Clone this repo and run `npm install`
+
 ## How to compile the project?
-  
-  npx hardhat compile
+
+npx hardhat compile
 
 ## How to test the project?
 
-  npx hardhat test
+npx hardhat test
 
 ## How to deploy the contracts?
 
-  npx hardhat run scripts/sample-script.js --network [networkname]
+npx hardhat run scripts/sample-script.js --network [networkname]
 
 ## How to verify the contracts?
-  
-  npx hardhat verify [contract_address] --network [network name] [constructor parameters]
+
+npx hardhat verify [contract_address] --network [network name] [constructor parameters]
+
+Dev:
+Aura address: 0x5210A32bC4d3aFf0C7596Fe592d28aE50F9b75fd
+Fuse address: 0xb137b694E05D0C2D2E4D40C3267e1f4007A73b73

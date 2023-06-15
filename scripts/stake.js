@@ -4,19 +4,22 @@ const hre = require("hardhat");
 async function main() {
   // We get the contract to deploy
   const { upgrades } = hre;
-  const { fuseBlockAddress, auraAddress, itemAddress } = hre.config.networks[hre.network.name];
+  const { fuseBlockAddress, auraAddress, itemAddress } =
+    hre.config.networks[hre.network.name];
   const Stake = await hre.ethers.getContractFactory("Stake");
 
   const stake = await upgrades.deployProxy(
-    Stake, 
+    Stake,
     [fuseBlockAddress, itemAddress, auraAddress],
     {
-      kind: "uups"
+      kind: "uups",
     }
-  )
+  );
   await stake.deployed();
 
-  console.log("Stake deployed to:", stake.address); 
+  console.log("Stake deployed to:", stake.address);
+
+  // const stake = Stake.attach(stakeAddress);
 
   const MockAura = await hre.ethers.getContractFactory("MockERC20");
   const FuseBlock = await hre.ethers.getContractFactory("FuseBlock");
