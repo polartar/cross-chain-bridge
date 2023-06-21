@@ -90,6 +90,14 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
       auraAddress: "0x4c16D9032560600Db5Bd1211965a2982be7e0fEA",
     },
+    lightlink_test: {
+      url: `https://replicator-01.pegasus.lightlink.io/rpc/v1`,
+      accounts: [process.env.PRIVATE_KEY],
+      auraAddress: "0x4c16D9032560600Db5Bd1211965a2982be7e0fEA",
+      fuseBlockAddress: "0x668d923D4be2ffF8EC7645a1E5Cebb57102493Ba",
+      itemAddress: "0x1FFC339cE1eF72F15eA7B0526a18abba74471b29",
+      stakeAddress: "0x8F4A0948B4CC550efF8d10004719F88f8F3070DC",
+    },
   },
   mocha: {
     timeout: 200000,

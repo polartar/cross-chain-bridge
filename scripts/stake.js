@@ -4,7 +4,7 @@ const hre = require("hardhat");
 async function main() {
   // We get the contract to deploy
   const { upgrades } = hre;
-  const { fuseBlockAddress, auraAddress, itemAddress } =
+  const { fuseBlockAddress, auraAddress, itemAddress, stakeAddress } =
     hre.config.networks[hre.network.name];
   const Stake = await hre.ethers.getContractFactory("Stake");
 
