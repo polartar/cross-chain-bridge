@@ -29,14 +29,14 @@ async function main() {
   await mockAura.setFuseBlockAddress(fuseBlockAddress);
   await mockAura.setItemAddress(itemAddress);
   await mockAura.setStakeAddress(stake.address);
-  await mockAura.approve(fuseBlockAddress, ethers.constants.MaxUint256);
+  await mockAura.approve(fuseBlockAddress, ethers.constants.MaxUint256); //error
 
   const fuseBlock = await FuseBlock.attach(fuseBlockAddress);
   await fuseBlock.setItemAddress(itemAddress);
 
   await fuseBlock.setApprovalForAll(stake.address, true);
   await mockAura.transfer(stake.address, parseEther("100000000"));
-  await mockAura.approve(stake.address, ethers.constants.MaxUint256);
+  await mockAura.approve(stake.address, ethers.constants.MaxUint256); //error
 
   const item = await Item.attach(itemAddress);
   await item.setApprovalForAll(stake.address, true);
