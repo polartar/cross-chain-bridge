@@ -1920,6 +1920,13 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
 
     address rgnAddress;
 
+    struct TransferInfo {
+        address from;
+        address to;
+        uint256 id;
+        uint256 amount;
+    }
+
     function initialize(address _auraAddress, address _fuseBlockAddress) public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
@@ -2029,6 +2036,18 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
         }
        
         super.safeTransferFrom(from, to, id, amount, data);
+    }
+
+    function batchTransferFrom(TransferInfo[] memory transferInfo) public {
+        uint256 len = transferInfo.length;
+
+        for(uint256 i = 0; i < len; ) {
+            TransferInfo memory transfer = transferInfo[i];
+            unchecked {
+                safeTransferFrom(transfer.from, transfer.to, transfer.id, transfer.amount, '');
+                ++i;
+            }
+        }
     }
 
     function safeBatchTransferFrom(

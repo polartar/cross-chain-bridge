@@ -2912,7 +2912,7 @@
             "label": "items",
             "offset": 0,
             "slot": "304",
-            "type": "t_mapping(t_uint256,t_struct(ItemInfo)5420_storage)",
+            "type": "t_mapping(t_uint256,t_struct(ItemInfo)5465_storage)",
             "contract": "Item",
             "src": "contracts/Item.sol:34"
           },
@@ -2920,7 +2920,7 @@
             "label": "fuseBlockItems",
             "offset": 0,
             "slot": "305",
-            "type": "t_mapping(t_uint256,t_struct(FuseBlockInfo)5431_storage)",
+            "type": "t_mapping(t_uint256,t_struct(FuseBlockInfo)5476_storage)",
             "contract": "Item",
             "src": "contracts/Item.sol:35"
           },
@@ -2982,11 +2982,11 @@
             "label": "mapping(uint256 => mapping(address => uint256))",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(FuseBlockInfo)5431_storage)": {
+          "t_mapping(t_uint256,t_struct(FuseBlockInfo)5476_storage)": {
             "label": "mapping(uint256 => struct Item.FuseBlockInfo)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(ItemInfo)5420_storage)": {
+          "t_mapping(t_uint256,t_struct(ItemInfo)5465_storage)": {
             "label": "mapping(uint256 => struct Item.ItemInfo)",
             "numberOfBytes": "32"
           },
@@ -3010,7 +3010,7 @@
             ],
             "numberOfBytes": "32"
           },
-          "t_struct(FuseBlockInfo)5431_storage": {
+          "t_struct(FuseBlockInfo)5476_storage": {
             "label": "struct Item.FuseBlockInfo",
             "members": [
               {
@@ -3040,7 +3040,7 @@
             ],
             "numberOfBytes": "128"
           },
-          "t_struct(ItemInfo)5420_storage": {
+          "t_struct(ItemInfo)5465_storage": {
             "label": "struct Item.ItemInfo",
             "members": [
               {
@@ -3340,6 +3340,293 @@
           "t_uint16": {
             "label": "uint16",
             "numberOfBytes": "2"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "8b664850981ccde45c9df903f785e96e273ba9a109e96560499e606bd38b92fc": {
+      "address": "0x38073cEfA7eF18577733f955C159b6141c477b0A",
+      "txHash": "0x2e5e25d9d45524b03afbced551844ff42fef03992aacbb5998e1f873b7a1cd43",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_balances",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:25"
+          },
+          {
+            "label": "_operatorApprovals",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:28"
+          },
+          {
+            "label": "_uri",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_string_storage",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:31"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_array(t_uint256)47_storage",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:522"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "252",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+          },
+          {
+            "label": "_tokenIdCounter",
+            "offset": 0,
+            "slot": "301",
+            "type": "t_struct(Counter)4270_storage",
+            "contract": "Item",
+            "src": "contracts/Item.sol:30"
+          },
+          {
+            "label": "auraAddress",
+            "offset": 0,
+            "slot": "302",
+            "type": "t_address",
+            "contract": "Item",
+            "src": "contracts/Item.sol:32"
+          },
+          {
+            "label": "fuseBlockAddress",
+            "offset": 0,
+            "slot": "303",
+            "type": "t_address",
+            "contract": "Item",
+            "src": "contracts/Item.sol:33"
+          },
+          {
+            "label": "items",
+            "offset": 0,
+            "slot": "304",
+            "type": "t_mapping(t_uint256,t_struct(ItemInfo)5465_storage)",
+            "contract": "Item",
+            "src": "contracts/Item.sol:34"
+          },
+          {
+            "label": "fuseBlockItems",
+            "offset": 0,
+            "slot": "305",
+            "type": "t_mapping(t_uint256,t_struct(FuseBlockInfo)5476_storage)",
+            "contract": "Item",
+            "src": "contracts/Item.sol:35"
+          },
+          {
+            "label": "fuseBlockIds",
+            "offset": 0,
+            "slot": "306",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "Item",
+            "src": "contracts/Item.sol:38"
+          },
+          {
+            "label": "rgnAddress",
+            "offset": 0,
+            "slot": "307",
+            "type": "t_address",
+            "contract": "Item",
+            "src": "contracts/Item.sol:40"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)47_storage": {
+            "label": "uint256[47]",
+            "numberOfBytes": "1504"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(uint256 => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(FuseBlockInfo)5476_storage)": {
+            "label": "mapping(uint256 => struct Item.FuseBlockInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(ItemInfo)5465_storage)": {
+            "label": "mapping(uint256 => struct Item.ItemInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Counter)4270_storage": {
+            "label": "struct CountersUpgradeable.Counter",
+            "members": [
+              {
+                "label": "_value",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(FuseBlockInfo)5476_storage": {
+            "label": "struct Item.FuseBlockInfo",
+            "members": [
+              {
+                "label": "auraAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "itemIds",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "itemAmounts",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "receiver",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(ItemInfo)5465_storage": {
+            "label": "struct Item.ItemInfo",
+            "members": [
+              {
+                "label": "itemUUID",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "auraAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
           },
           "t_uint256": {
             "label": "uint256",
