@@ -50,6 +50,12 @@ module.exports = {
       fuseBlockAddress: "0x95959432293943D77Ed3e2eA065E9D65A21d0227",
       itemAddress: "0x668d923D4be2ffF8EC7645a1E5Cebb57102493Ba",
       stakeAddress: "0x479644b1c2fbbB1713ef56038b26292609554189",
+
+      /*
+    testing
+     aura: 0x4d94721A154aab60588c68653EF9650d68BA59B5
+     item: 0xa4AF7ea97A116b9c5b736AfdC614dE142c1034Bd
+    */
     },
     mumbai: {
       // url: "https://rpc-mumbai.maticvigil.com",
@@ -98,9 +104,13 @@ module.exports = {
       itemAddress: "0x1FFC339cE1eF72F15eA7B0526a18abba74471b29",
       stakeAddress: "0x8F4A0948B4CC550efF8d10004719F88f8F3070DC",
     },
+    satoshi: {
+      accounts: [process.env.PRIVATE_KEY],
+      url: `https://mainnet-rpc.satoshichain.io`,
+    },
   },
   mocha: {
-    timeout: 200000,
+    timeout: 1500000,
   },
   etherscan: {
     apiKey: process.env.POLYGON_API_KEY,

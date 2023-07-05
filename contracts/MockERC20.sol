@@ -15,7 +15,7 @@ contract MockERC20 is UUPSUpgradeable, ERC20Upgradeable, OwnableUpgradeable {
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        __ERC20_init("Aura Token", "AU");
+        __ERC20_init("Test Aura Token", "Test AU");
         
         _mint(msg.sender, 100000000 * (10 ** 18));
     }

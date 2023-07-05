@@ -892,243 +892,33 @@ interface IERC20Upgradeable {
 }
 
 
-// File @openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol@v4.6.0
+// File @openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol@v4.6.0
 
 
-// OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)
-
-pragma solidity ^0.8.0;
-
-/**
- * @dev Interface of the ERC165 standard, as defined in the
- * https://eips.ethereum.org/EIPS/eip-165[EIP].
- *
- * Implementers can declare support of contract interfaces, which can then be
- * queried by others ({ERC165Checker}).
- *
- * For an implementation, see {ERC165}.
- */
-interface IERC165Upgradeable {
-    /**
-     * @dev Returns true if this contract implements the interface defined by
-     * `interfaceId`. See the corresponding
-     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]
-     * to learn more about how these ids are created.
-     *
-     * This function call must use less than 30 000 gas.
-     */
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
-}
-
-
-// File @openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol@v4.6.0
-
-
-// OpenZeppelin Contracts v4.4.1 (token/ERC1155/IERC1155.sol)
+// OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
 pragma solidity ^0.8.0;
 
 /**
- * @dev Required interface of an ERC1155 compliant contract, as defined in the
- * https://eips.ethereum.org/EIPS/eip-1155[EIP].
+ * @dev Interface for the optional metadata functions from the ERC20 standard.
  *
- * _Available since v3.1._
+ * _Available since v4.1._
  */
-interface IERC1155Upgradeable is IERC165Upgradeable {
+interface IERC20MetadataUpgradeable is IERC20Upgradeable {
     /**
-     * @dev Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
+     * @dev Returns the name of the token.
      */
-    event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value);
-
-    /**
-     * @dev Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
-     * transfers.
-     */
-    event TransferBatch(
-        address indexed operator,
-        address indexed from,
-        address indexed to,
-        uint256[] ids,
-        uint256[] values
-    );
+    function name() external view returns (string memory);
 
     /**
-     * @dev Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
-     * `approved`.
+     * @dev Returns the symbol of the token.
      */
-    event ApprovalForAll(address indexed account, address indexed operator, bool approved);
+    function symbol() external view returns (string memory);
 
     /**
-     * @dev Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI.
-     *
-     * If an {URI} event was emitted for `id`, the standard
-     * https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value
-     * returned by {IERC1155MetadataURI-uri}.
+     * @dev Returns the decimals places of the token.
      */
-    event URI(string value, uint256 indexed id);
-
-    /**
-     * @dev Returns the amount of tokens of token type `id` owned by `account`.
-     *
-     * Requirements:
-     *
-     * - `account` cannot be the zero address.
-     */
-    function balanceOf(address account, uint256 id) external view returns (uint256);
-
-    /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {balanceOf}.
-     *
-     * Requirements:
-     *
-     * - `accounts` and `ids` must have the same length.
-     */
-    function balanceOfBatch(address[] calldata accounts, uint256[] calldata ids)
-        external
-        view
-        returns (uint256[] memory);
-
-    /**
-     * @dev Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`,
-     *
-     * Emits an {ApprovalForAll} event.
-     *
-     * Requirements:
-     *
-     * - `operator` cannot be the caller.
-     */
-    function setApprovalForAll(address operator, bool approved) external;
-
-    /**
-     * @dev Returns true if `operator` is approved to transfer ``account``'s tokens.
-     *
-     * See {setApprovalForAll}.
-     */
-    function isApprovedForAll(address account, address operator) external view returns (bool);
-
-    /**
-     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
-     *
-     * Emits a {TransferSingle} event.
-     *
-     * Requirements:
-     *
-     * - `to` cannot be the zero address.
-     * - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
-     * - `from` must have a balance of tokens of type `id` of at least `amount`.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
-     * acceptance magic value.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes calldata data
-    ) external;
-
-    /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {safeTransferFrom}.
-     *
-     * Emits a {TransferBatch} event.
-     *
-     * Requirements:
-     *
-     * - `ids` and `amounts` must have the same length.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the
-     * acceptance magic value.
-     */
-    function safeBatchTransferFrom(
-        address from,
-        address to,
-        uint256[] calldata ids,
-        uint256[] calldata amounts,
-        bytes calldata data
-    ) external;
-}
-
-
-// File @openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol@v4.6.0
-
-
-// OpenZeppelin Contracts (last updated v4.5.0) (token/ERC1155/IERC1155Receiver.sol)
-
-pragma solidity ^0.8.0;
-
-/**
- * @dev _Available since v3.1._
- */
-interface IERC1155ReceiverUpgradeable is IERC165Upgradeable {
-    /**
-     * @dev Handles the receipt of a single ERC1155 token type. This function is
-     * called at the end of a `safeTransferFrom` after the balance has been updated.
-     *
-     * NOTE: To accept the transfer, this must return
-     * `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))`
-     * (i.e. 0xf23a6e61, or its own function selector).
-     *
-     * @param operator The address which initiated the transfer (i.e. msg.sender)
-     * @param from The address which previously owned the token
-     * @param id The ID of the token being transferred
-     * @param value The amount of tokens being transferred
-     * @param data Additional data with no specified format
-     * @return `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))` if transfer is allowed
-     */
-    function onERC1155Received(
-        address operator,
-        address from,
-        uint256 id,
-        uint256 value,
-        bytes calldata data
-    ) external returns (bytes4);
-
-    /**
-     * @dev Handles the receipt of a multiple ERC1155 token types. This function
-     * is called at the end of a `safeBatchTransferFrom` after the balances have
-     * been updated.
-     *
-     * NOTE: To accept the transfer(s), this must return
-     * `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))`
-     * (i.e. 0xbc197c81, or its own function selector).
-     *
-     * @param operator The address which initiated the batch transfer (i.e. msg.sender)
-     * @param from The address which previously owned the token
-     * @param ids An array containing ids of each token being transferred (order and length must match values array)
-     * @param values An array containing amounts of each token being transferred (order and length must match ids array)
-     * @param data Additional data with no specified format
-     * @return `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))` if transfer is allowed
-     */
-    function onERC1155BatchReceived(
-        address operator,
-        address from,
-        uint256[] calldata ids,
-        uint256[] calldata values,
-        bytes calldata data
-    ) external returns (bytes4);
-}
-
-
-// File @openzeppelin/contracts-upgradeable/token/ERC1155/extensions/IERC1155MetadataURIUpgradeable.sol@v4.6.0
-
-
-// OpenZeppelin Contracts v4.4.1 (token/ERC1155/extensions/IERC1155MetadataURI.sol)
-
-pragma solidity ^0.8.0;
-
-/**
- * @dev Interface of the optional ERC1155MetadataExtension interface, as defined
- * in the https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[EIP].
- *
- * _Available since v3.1._
- */
-interface IERC1155MetadataURIUpgradeable is IERC1155Upgradeable {
-    /**
-     * @dev Returns the URI for token type `id`.
-     *
-     * If the `\{id\}` substring is present in the URI, it must be replaced by
-     * clients with the actual token type ID.
-     */
-    function uri(uint256 id) external view returns (string memory);
+    function decimals() external view returns (uint8);
 }
 
 
@@ -1172,572 +962,400 @@ abstract contract ContextUpgradeable is Initializable {
 }
 
 
-// File @openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol@v4.6.0
+// File @openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol@v4.6.0
 
 
-// OpenZeppelin Contracts v4.4.1 (utils/introspection/ERC165.sol)
-
-pragma solidity ^0.8.0;
-
-
-/**
- * @dev Implementation of the {IERC165} interface.
- *
- * Contracts that want to implement ERC165 should inherit from this contract and override {supportsInterface} to check
- * for the additional interface id that will be supported. For example:
- *
- * ```solidity
- * function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
- *     return interfaceId == type(MyInterface).interfaceId || super.supportsInterface(interfaceId);
- * }
- * ```
- *
- * Alternatively, {ERC165Storage} provides an easier to use but more expensive implementation.
- */
-abstract contract ERC165Upgradeable is Initializable, IERC165Upgradeable {
-    function __ERC165_init() internal onlyInitializing {
-    }
-
-    function __ERC165_init_unchained() internal onlyInitializing {
-    }
-    /**
-     * @dev See {IERC165-supportsInterface}.
-     */
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return interfaceId == type(IERC165Upgradeable).interfaceId;
-    }
-
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
-}
-
-
-// File @openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol@v4.6.0
-
-
-// OpenZeppelin Contracts (last updated v4.6.0) (token/ERC1155/ERC1155.sol)
+// OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.0;
 
 
 
 
-
-
-
 /**
- * @dev Implementation of the basic standard multi-token.
- * See https://eips.ethereum.org/EIPS/eip-1155
- * Originally based on code by Enjin: https://github.com/enjin/erc-1155
+ * @dev Implementation of the {IERC20} interface.
  *
- * _Available since v3.1._
+ * This implementation is agnostic to the way tokens are created. This means
+ * that a supply mechanism has to be added in a derived contract using {_mint}.
+ * For a generic mechanism see {ERC20PresetMinterPauser}.
+ *
+ * TIP: For a detailed writeup see our guide
+ * https://forum.zeppelin.solutions/t/how-to-implement-erc20-supply-mechanisms/226[How
+ * to implement supply mechanisms].
+ *
+ * We have followed general OpenZeppelin Contracts guidelines: functions revert
+ * instead returning `false` on failure. This behavior is nonetheless
+ * conventional and does not conflict with the expectations of ERC20
+ * applications.
+ *
+ * Additionally, an {Approval} event is emitted on calls to {transferFrom}.
+ * This allows applications to reconstruct the allowance for all accounts just
+ * by listening to said events. Other implementations of the EIP may not emit
+ * these events, as it isn't required by the specification.
+ *
+ * Finally, the non-standard {decreaseAllowance} and {increaseAllowance}
+ * functions have been added to mitigate the well-known issues around setting
+ * allowances. See {IERC20-approve}.
  */
-contract ERC1155Upgradeable is Initializable, ContextUpgradeable, ERC165Upgradeable, IERC1155Upgradeable, IERC1155MetadataURIUpgradeable {
-    using AddressUpgradeable for address;
+contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeable, IERC20MetadataUpgradeable {
+    mapping(address => uint256) private _balances;
 
-    // Mapping from token ID to account balances
-    mapping(uint256 => mapping(address => uint256)) private _balances;
+    mapping(address => mapping(address => uint256)) private _allowances;
 
-    // Mapping from account to operator approvals
-    mapping(address => mapping(address => bool)) private _operatorApprovals;
+    uint256 private _totalSupply;
 
-    // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
-    string private _uri;
+    string private _name;
+    string private _symbol;
 
     /**
-     * @dev See {_setURI}.
-     */
-    function __ERC1155_init(string memory uri_) internal onlyInitializing {
-        __ERC1155_init_unchained(uri_);
-    }
-
-    function __ERC1155_init_unchained(string memory uri_) internal onlyInitializing {
-        _setURI(uri_);
-    }
-
-    /**
-     * @dev See {IERC165-supportsInterface}.
-     */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165Upgradeable, IERC165Upgradeable) returns (bool) {
-        return
-            interfaceId == type(IERC1155Upgradeable).interfaceId ||
-            interfaceId == type(IERC1155MetadataURIUpgradeable).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
-
-    /**
-     * @dev See {IERC1155MetadataURI-uri}.
+     * @dev Sets the values for {name} and {symbol}.
      *
-     * This implementation returns the same URI for *all* token types. It relies
-     * on the token type ID substitution mechanism
-     * https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP].
+     * The default value of {decimals} is 18. To select a different value for
+     * {decimals} you should overload it.
      *
-     * Clients calling this function must replace the `\{id\}` substring with the
-     * actual token type ID.
+     * All two of these values are immutable: they can only be set once during
+     * construction.
      */
-    function uri(uint256) public view virtual override returns (string memory) {
-        return _uri;
+    function __ERC20_init(string memory name_, string memory symbol_) internal onlyInitializing {
+        __ERC20_init_unchained(name_, symbol_);
+    }
+
+    function __ERC20_init_unchained(string memory name_, string memory symbol_) internal onlyInitializing {
+        _name = name_;
+        _symbol = symbol_;
     }
 
     /**
-     * @dev See {IERC1155-balanceOf}.
+     * @dev Returns the name of the token.
+     */
+    function name() public view virtual override returns (string memory) {
+        return _name;
+    }
+
+    /**
+     * @dev Returns the symbol of the token, usually a shorter version of the
+     * name.
+     */
+    function symbol() public view virtual override returns (string memory) {
+        return _symbol;
+    }
+
+    /**
+     * @dev Returns the number of decimals used to get its user representation.
+     * For example, if `decimals` equals `2`, a balance of `505` tokens should
+     * be displayed to a user as `5.05` (`505 / 10 ** 2`).
+     *
+     * Tokens usually opt for a value of 18, imitating the relationship between
+     * Ether and Wei. This is the value {ERC20} uses, unless this function is
+     * overridden;
+     *
+     * NOTE: This information is only used for _display_ purposes: it in
+     * no way affects any of the arithmetic of the contract, including
+     * {IERC20-balanceOf} and {IERC20-transfer}.
+     */
+    function decimals() public view virtual override returns (uint8) {
+        return 18;
+    }
+
+    /**
+     * @dev See {IERC20-totalSupply}.
+     */
+    function totalSupply() public view virtual override returns (uint256) {
+        return _totalSupply;
+    }
+
+    /**
+     * @dev See {IERC20-balanceOf}.
+     */
+    function balanceOf(address account) public view virtual override returns (uint256) {
+        return _balances[account];
+    }
+
+    /**
+     * @dev See {IERC20-transfer}.
+     *
+     * Requirements:
+     *
+     * - `to` cannot be the zero address.
+     * - the caller must have a balance of at least `amount`.
+     */
+    function transfer(address to, uint256 amount) public virtual override returns (bool) {
+        address owner = _msgSender();
+        _transfer(owner, to, amount);
+        return true;
+    }
+
+    /**
+     * @dev See {IERC20-allowance}.
+     */
+    function allowance(address owner, address spender) public view virtual override returns (uint256) {
+        return _allowances[owner][spender];
+    }
+
+    /**
+     * @dev See {IERC20-approve}.
+     *
+     * NOTE: If `amount` is the maximum `uint256`, the allowance is not updated on
+     * `transferFrom`. This is semantically equivalent to an infinite approval.
+     *
+     * Requirements:
+     *
+     * - `spender` cannot be the zero address.
+     */
+    function approve(address spender, uint256 amount) public virtual override returns (bool) {
+        address owner = _msgSender();
+        _approve(owner, spender, amount);
+        return true;
+    }
+
+    /**
+     * @dev See {IERC20-transferFrom}.
+     *
+     * Emits an {Approval} event indicating the updated allowance. This is not
+     * required by the EIP. See the note at the beginning of {ERC20}.
+     *
+     * NOTE: Does not update the allowance if the current allowance
+     * is the maximum `uint256`.
+     *
+     * Requirements:
+     *
+     * - `from` and `to` cannot be the zero address.
+     * - `from` must have a balance of at least `amount`.
+     * - the caller must have allowance for ``from``'s tokens of at least
+     * `amount`.
+     */
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) public virtual override returns (bool) {
+        address spender = _msgSender();
+        _spendAllowance(from, spender, amount);
+        _transfer(from, to, amount);
+        return true;
+    }
+
+    /**
+     * @dev Atomically increases the allowance granted to `spender` by the caller.
+     *
+     * This is an alternative to {approve} that can be used as a mitigation for
+     * problems described in {IERC20-approve}.
+     *
+     * Emits an {Approval} event indicating the updated allowance.
+     *
+     * Requirements:
+     *
+     * - `spender` cannot be the zero address.
+     */
+    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
+        address owner = _msgSender();
+        _approve(owner, spender, allowance(owner, spender) + addedValue);
+        return true;
+    }
+
+    /**
+     * @dev Atomically decreases the allowance granted to `spender` by the caller.
+     *
+     * This is an alternative to {approve} that can be used as a mitigation for
+     * problems described in {IERC20-approve}.
+     *
+     * Emits an {Approval} event indicating the updated allowance.
+     *
+     * Requirements:
+     *
+     * - `spender` cannot be the zero address.
+     * - `spender` must have allowance for the caller of at least
+     * `subtractedValue`.
+     */
+    function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
+        address owner = _msgSender();
+        uint256 currentAllowance = allowance(owner, spender);
+        require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
+        unchecked {
+            _approve(owner, spender, currentAllowance - subtractedValue);
+        }
+
+        return true;
+    }
+
+    /**
+     * @dev Moves `amount` of tokens from `sender` to `recipient`.
+     *
+     * This internal function is equivalent to {transfer}, and can be used to
+     * e.g. implement automatic token fees, slashing mechanisms, etc.
+     *
+     * Emits a {Transfer} event.
+     *
+     * Requirements:
+     *
+     * - `from` cannot be the zero address.
+     * - `to` cannot be the zero address.
+     * - `from` must have a balance of at least `amount`.
+     */
+    function _transfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal virtual {
+        require(from != address(0), "ERC20: transfer from the zero address");
+        require(to != address(0), "ERC20: transfer to the zero address");
+
+        _beforeTokenTransfer(from, to, amount);
+
+        uint256 fromBalance = _balances[from];
+        require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
+        unchecked {
+            _balances[from] = fromBalance - amount;
+        }
+        _balances[to] += amount;
+
+        emit Transfer(from, to, amount);
+
+        _afterTokenTransfer(from, to, amount);
+    }
+
+    /** @dev Creates `amount` tokens and assigns them to `account`, increasing
+     * the total supply.
+     *
+     * Emits a {Transfer} event with `from` set to the zero address.
      *
      * Requirements:
      *
      * - `account` cannot be the zero address.
      */
-    function balanceOf(address account, uint256 id) public view virtual override returns (uint256) {
-        require(account != address(0), "ERC1155: balance query for the zero address");
-        return _balances[id][account];
+    function _mint(address account, uint256 amount) internal virtual {
+        require(account != address(0), "ERC20: mint to the zero address");
+
+        _beforeTokenTransfer(address(0), account, amount);
+
+        _totalSupply += amount;
+        _balances[account] += amount;
+        emit Transfer(address(0), account, amount);
+
+        _afterTokenTransfer(address(0), account, amount);
     }
 
     /**
-     * @dev See {IERC1155-balanceOfBatch}.
+     * @dev Destroys `amount` tokens from `account`, reducing the
+     * total supply.
+     *
+     * Emits a {Transfer} event with `to` set to the zero address.
      *
      * Requirements:
      *
-     * - `accounts` and `ids` must have the same length.
+     * - `account` cannot be the zero address.
+     * - `account` must have at least `amount` tokens.
      */
-    function balanceOfBatch(address[] memory accounts, uint256[] memory ids)
-        public
-        view
-        virtual
-        override
-        returns (uint256[] memory)
-    {
-        require(accounts.length == ids.length, "ERC1155: accounts and ids length mismatch");
+    function _burn(address account, uint256 amount) internal virtual {
+        require(account != address(0), "ERC20: burn from the zero address");
 
-        uint256[] memory batchBalances = new uint256[](accounts.length);
+        _beforeTokenTransfer(account, address(0), amount);
 
-        for (uint256 i = 0; i < accounts.length; ++i) {
-            batchBalances[i] = balanceOf(accounts[i], ids[i]);
-        }
-
-        return batchBalances;
-    }
-
-    /**
-     * @dev See {IERC1155-setApprovalForAll}.
-     */
-    function setApprovalForAll(address operator, bool approved) public virtual override {
-        _setApprovalForAll(_msgSender(), operator, approved);
-    }
-
-    /**
-     * @dev See {IERC1155-isApprovedForAll}.
-     */
-    function isApprovedForAll(address account, address operator) public view virtual override returns (bool) {
-        return _operatorApprovals[account][operator];
-    }
-
-    /**
-     * @dev See {IERC1155-safeTransferFrom}.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) public virtual override {
-        require(
-            from == _msgSender() || isApprovedForAll(from, _msgSender()),
-            "ERC1155: caller is not owner nor approved"
-        );
-        _safeTransferFrom(from, to, id, amount, data);
-    }
-
-    /**
-     * @dev See {IERC1155-safeBatchTransferFrom}.
-     */
-    function safeBatchTransferFrom(
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) public virtual override {
-        require(
-            from == _msgSender() || isApprovedForAll(from, _msgSender()),
-            "ERC1155: transfer caller is not owner nor approved"
-        );
-        _safeBatchTransferFrom(from, to, ids, amounts, data);
-    }
-
-    /**
-     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
-     *
-     * Emits a {TransferSingle} event.
-     *
-     * Requirements:
-     *
-     * - `to` cannot be the zero address.
-     * - `from` must have a balance of tokens of type `id` of at least `amount`.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
-     * acceptance magic value.
-     */
-    function _safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) internal virtual {
-        require(to != address(0), "ERC1155: transfer to the zero address");
-
-        address operator = _msgSender();
-        uint256[] memory ids = _asSingletonArray(id);
-        uint256[] memory amounts = _asSingletonArray(amount);
-
-        _beforeTokenTransfer(operator, from, to, ids, amounts, data);
-
-        uint256 fromBalance = _balances[id][from];
-        require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
+        uint256 accountBalance = _balances[account];
+        require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
         unchecked {
-            _balances[id][from] = fromBalance - amount;
+            _balances[account] = accountBalance - amount;
         }
-        _balances[id][to] += amount;
+        _totalSupply -= amount;
 
-        emit TransferSingle(operator, from, to, id, amount);
+        emit Transfer(account, address(0), amount);
 
-        _afterTokenTransfer(operator, from, to, ids, amounts, data);
-
-        _doSafeTransferAcceptanceCheck(operator, from, to, id, amount, data);
+        _afterTokenTransfer(account, address(0), amount);
     }
 
     /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_safeTransferFrom}.
+     * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
      *
-     * Emits a {TransferBatch} event.
+     * This internal function is equivalent to `approve`, and can be used to
+     * e.g. set automatic allowances for certain subsystems, etc.
+     *
+     * Emits an {Approval} event.
      *
      * Requirements:
      *
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the
-     * acceptance magic value.
+     * - `owner` cannot be the zero address.
+     * - `spender` cannot be the zero address.
      */
-    function _safeBatchTransferFrom(
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal virtual {
-        require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
-        require(to != address(0), "ERC1155: transfer to the zero address");
-
-        address operator = _msgSender();
-
-        _beforeTokenTransfer(operator, from, to, ids, amounts, data);
-
-        for (uint256 i = 0; i < ids.length; ++i) {
-            uint256 id = ids[i];
-            uint256 amount = amounts[i];
-
-            uint256 fromBalance = _balances[id][from];
-            require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
-            unchecked {
-                _balances[id][from] = fromBalance - amount;
-            }
-            _balances[id][to] += amount;
-        }
-
-        emit TransferBatch(operator, from, to, ids, amounts);
-
-        _afterTokenTransfer(operator, from, to, ids, amounts, data);
-
-        _doSafeBatchTransferAcceptanceCheck(operator, from, to, ids, amounts, data);
-    }
-
-    /**
-     * @dev Sets a new URI for all token types, by relying on the token type ID
-     * substitution mechanism
-     * https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP].
-     *
-     * By this mechanism, any occurrence of the `\{id\}` substring in either the
-     * URI or any of the amounts in the JSON file at said URI will be replaced by
-     * clients with the token type ID.
-     *
-     * For example, the `https://token-cdn-domain/\{id\}.json` URI would be
-     * interpreted by clients as
-     * `https://token-cdn-domain/000000000000000000000000000000000000000000000000000000000004cce0.json`
-     * for token type ID 0x4cce0.
-     *
-     * See {uri}.
-     *
-     * Because these URIs cannot be meaningfully represented by the {URI} event,
-     * this function emits no events.
-     */
-    function _setURI(string memory newuri) internal virtual {
-        _uri = newuri;
-    }
-
-    /**
-     * @dev Creates `amount` tokens of token type `id`, and assigns them to `to`.
-     *
-     * Emits a {TransferSingle} event.
-     *
-     * Requirements:
-     *
-     * - `to` cannot be the zero address.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
-     * acceptance magic value.
-     */
-    function _mint(
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) internal virtual {
-        require(to != address(0), "ERC1155: mint to the zero address");
-
-        address operator = _msgSender();
-        uint256[] memory ids = _asSingletonArray(id);
-        uint256[] memory amounts = _asSingletonArray(amount);
-
-        _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
-
-        _balances[id][to] += amount;
-        emit TransferSingle(operator, address(0), to, id, amount);
-
-        _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
-
-        _doSafeTransferAcceptanceCheck(operator, address(0), to, id, amount, data);
-    }
-
-    /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_mint}.
-     *
-     * Requirements:
-     *
-     * - `ids` and `amounts` must have the same length.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the
-     * acceptance magic value.
-     */
-    function _mintBatch(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal virtual {
-        require(to != address(0), "ERC1155: mint to the zero address");
-        require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
-
-        address operator = _msgSender();
-
-        _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
-
-        for (uint256 i = 0; i < ids.length; i++) {
-            _balances[ids[i]][to] += amounts[i];
-        }
-
-        emit TransferBatch(operator, address(0), to, ids, amounts);
-
-        _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
-
-        _doSafeBatchTransferAcceptanceCheck(operator, address(0), to, ids, amounts, data);
-    }
-
-    /**
-     * @dev Destroys `amount` tokens of token type `id` from `from`
-     *
-     * Requirements:
-     *
-     * - `from` cannot be the zero address.
-     * - `from` must have at least `amount` tokens of token type `id`.
-     */
-    function _burn(
-        address from,
-        uint256 id,
+    function _approve(
+        address owner,
+        address spender,
         uint256 amount
     ) internal virtual {
-        require(from != address(0), "ERC1155: burn from the zero address");
+        require(owner != address(0), "ERC20: approve from the zero address");
+        require(spender != address(0), "ERC20: approve to the zero address");
 
-        address operator = _msgSender();
-        uint256[] memory ids = _asSingletonArray(id);
-        uint256[] memory amounts = _asSingletonArray(amount);
-
-        _beforeTokenTransfer(operator, from, address(0), ids, amounts, "");
-
-        uint256 fromBalance = _balances[id][from];
-        require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
-        unchecked {
-            _balances[id][from] = fromBalance - amount;
-        }
-
-        emit TransferSingle(operator, from, address(0), id, amount);
-
-        _afterTokenTransfer(operator, from, address(0), ids, amounts, "");
+        _allowances[owner][spender] = amount;
+        emit Approval(owner, spender, amount);
     }
 
     /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_burn}.
+     * @dev Updates `owner` s allowance for `spender` based on spent `amount`.
      *
-     * Requirements:
+     * Does not update the allowance amount in case of infinite allowance.
+     * Revert if not enough allowance is available.
      *
-     * - `ids` and `amounts` must have the same length.
+     * Might emit an {Approval} event.
      */
-    function _burnBatch(
-        address from,
-        uint256[] memory ids,
-        uint256[] memory amounts
+    function _spendAllowance(
+        address owner,
+        address spender,
+        uint256 amount
     ) internal virtual {
-        require(from != address(0), "ERC1155: burn from the zero address");
-        require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
-
-        address operator = _msgSender();
-
-        _beforeTokenTransfer(operator, from, address(0), ids, amounts, "");
-
-        for (uint256 i = 0; i < ids.length; i++) {
-            uint256 id = ids[i];
-            uint256 amount = amounts[i];
-
-            uint256 fromBalance = _balances[id][from];
-            require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
+        uint256 currentAllowance = allowance(owner, spender);
+        if (currentAllowance != type(uint256).max) {
+            require(currentAllowance >= amount, "ERC20: insufficient allowance");
             unchecked {
-                _balances[id][from] = fromBalance - amount;
+                _approve(owner, spender, currentAllowance - amount);
             }
         }
-
-        emit TransferBatch(operator, from, address(0), ids, amounts);
-
-        _afterTokenTransfer(operator, from, address(0), ids, amounts, "");
     }
 
     /**
-     * @dev Approve `operator` to operate on all of `owner` tokens
+     * @dev Hook that is called before any transfer of tokens. This includes
+     * minting and burning.
      *
-     * Emits a {ApprovalForAll} event.
-     */
-    function _setApprovalForAll(
-        address owner,
-        address operator,
-        bool approved
-    ) internal virtual {
-        require(owner != operator, "ERC1155: setting approval status for self");
-        _operatorApprovals[owner][operator] = approved;
-        emit ApprovalForAll(owner, operator, approved);
-    }
-
-    /**
-     * @dev Hook that is called before any token transfer. This includes minting
-     * and burning, as well as batched variants.
+     * Calling conditions:
      *
-     * The same hook is called on both single and batched variants. For single
-     * transfers, the length of the `id` and `amount` arrays will be 1.
-     *
-     * Calling conditions (for each `id` and `amount` pair):
-     *
-     * - When `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * of token type `id` will be  transferred to `to`.
-     * - When `from` is zero, `amount` tokens of token type `id` will be minted
-     * for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens of token type `id`
-     * will be burned.
+     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
+     * will be transferred to `to`.
+     * - when `from` is zero, `amount` tokens will be minted for `to`.
+     * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
      * - `from` and `to` are never both zero.
-     * - `ids` and `amounts` have the same, non-zero length.
      *
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(
-        address operator,
         address from,
         address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
+        uint256 amount
     ) internal virtual {}
 
     /**
-     * @dev Hook that is called after any token transfer. This includes minting
-     * and burning, as well as batched variants.
+     * @dev Hook that is called after any transfer of tokens. This includes
+     * minting and burning.
      *
-     * The same hook is called on both single and batched variants. For single
-     * transfers, the length of the `id` and `amount` arrays will be 1.
+     * Calling conditions:
      *
-     * Calling conditions (for each `id` and `amount` pair):
-     *
-     * - When `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * of token type `id` will be  transferred to `to`.
-     * - When `from` is zero, `amount` tokens of token type `id` will be minted
-     * for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens of token type `id`
-     * will be burned.
+     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
+     * has been transferred to `to`.
+     * - when `from` is zero, `amount` tokens have been minted for `to`.
+     * - when `to` is zero, `amount` of ``from``'s tokens have been burned.
      * - `from` and `to` are never both zero.
-     * - `ids` and `amounts` have the same, non-zero length.
      *
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _afterTokenTransfer(
-        address operator,
         address from,
         address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
+        uint256 amount
     ) internal virtual {}
-
-    function _doSafeTransferAcceptanceCheck(
-        address operator,
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) private {
-        if (to.isContract()) {
-            try IERC1155ReceiverUpgradeable(to).onERC1155Received(operator, from, id, amount, data) returns (bytes4 response) {
-                if (response != IERC1155ReceiverUpgradeable.onERC1155Received.selector) {
-                    revert("ERC1155: ERC1155Receiver rejected tokens");
-                }
-            } catch Error(string memory reason) {
-                revert(reason);
-            } catch {
-                revert("ERC1155: transfer to non ERC1155Receiver implementer");
-            }
-        }
-    }
-
-    function _doSafeBatchTransferAcceptanceCheck(
-        address operator,
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) private {
-        if (to.isContract()) {
-            try IERC1155ReceiverUpgradeable(to).onERC1155BatchReceived(operator, from, ids, amounts, data) returns (
-                bytes4 response
-            ) {
-                if (response != IERC1155ReceiverUpgradeable.onERC1155BatchReceived.selector) {
-                    revert("ERC1155: ERC1155Receiver rejected tokens");
-                }
-            } catch Error(string memory reason) {
-                revert(reason);
-            } catch {
-                revert("ERC1155: transfer to non ERC1155Receiver implementer");
-            }
-        }
-    }
-
-    function _asSingletonArray(uint256 element) private pure returns (uint256[] memory) {
-        uint256[] memory array = new uint256[](1);
-        array[0] = element;
-
-        return array;
-    }
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
      * variables without shifting down storage in the inheritance chain.
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[47] private __gap;
+    uint256[45] private __gap;
 }
 
 
@@ -1831,356 +1449,55 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
 }
 
 
-// File @openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol@v4.6.0
-
-
-// OpenZeppelin Contracts v4.4.1 (utils/Counters.sol)
-
-pragma solidity ^0.8.0;
-
-/**
- * @title Counters
- * @author Matt Condon (@shrugs)
- * @dev Provides counters that can only be incremented, decremented or reset. This can be used e.g. to track the number
- * of elements in a mapping, issuing ERC721 ids, or counting request ids.
- *
- * Include with `using Counters for Counters.Counter;`
- */
-library CountersUpgradeable {
-    struct Counter {
-        // This variable should never be directly accessed by users of the library: interactions must be restricted to
-        // the library's function. As of Solidity v0.5.2, this cannot be enforced, though there is a proposal to add
-        // this feature: see https://github.com/ethereum/solidity/issues/4637
-        uint256 _value; // default: 0
-    }
-
-    function current(Counter storage counter) internal view returns (uint256) {
-        return counter._value;
-    }
-
-    function increment(Counter storage counter) internal {
-        unchecked {
-            counter._value += 1;
-        }
-    }
-
-    function decrement(Counter storage counter) internal {
-        uint256 value = counter._value;
-        require(value > 0, "Counter: decrement overflow");
-        unchecked {
-            counter._value = value - 1;
-        }
-    }
-
-    function reset(Counter storage counter) internal {
-        counter._value = 0;
-    }
-}
-
-
-// File contracts/Item.sol
+// File contracts/MockERC20.sol
 
 
 pragma solidity ^0.8.4;
 
 
 
+contract MockERC20 is UUPSUpgradeable, ERC20Upgradeable, OwnableUpgradeable {
+    address fuseBlockAddress;
+    address itemAddress;
+    address stakeAddress;
 
-
-interface IFuseBlock {
-    function getRequirementStatus(uint256 _tokenId) external view returns(bool);
-}
-
-contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
-    event Mint(address indexed to, uint256 id, uint256 value, string uuid);
-    event MintDirect(address indexed to, uint256 id, uint256 value, string uuid, string data);
-    event InfusedMint(address indexed to, uint256 id, uint256 value, string uuid, bool isBurn);
-    
-    struct MintInfo {
-        address receiver;
-        string itemUUID;
-        uint256 quantity;
-        uint256 auraAmount;
-    }
-    struct ItemInfo {
-        string itemUUID;
-        uint256 auraAmount;
-    }
-
-    struct FuseBlockInfo {
-        uint256 auraAmount;
-        uint256[] itemIds;
-        uint256[] itemAmounts;
-        address receiver;
-    }
-
-    using CountersUpgradeable for CountersUpgradeable.Counter;
-    CountersUpgradeable.Counter public _tokenIdCounter;
-
-    address public auraAddress;
-    address public fuseBlockAddress;
-    mapping(uint256 => ItemInfo) items;
-    mapping(uint256 => FuseBlockInfo) fuseBlockItems;
-
-    // itemId => fuseBlockId
-    mapping(uint256 => uint256) fuseBlockIds;
-
-    address rgnAddress;
-
-    struct TransferInfo {
-        address from;
-        address to;
-        uint256 id;
-        uint256 amount;
-    }
-
-    function initialize(address _auraAddress, address _fuseBlockAddress) public initializer {
+    function initialize() public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        __ERC1155_init("");
+        __ERC20_init("Test Aura Token", "Test AU");
         
-        auraAddress = _auraAddress;
-        fuseBlockAddress = _fuseBlockAddress;
-        _tokenIdCounter.increment();
+        _mint(msg.sender, 100000000 * (10 ** 18));
     }
 
     function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
-    modifier onlyFuseBlock() {
-        require(msg.sender == fuseBlockAddress);
-        _;
+    function mint(uint256 _amount) public onlyOwner {
+        _mint(msg.sender, _amount);
     }
 
-    function setURI(string memory newuri) external onlyOwner {
-        _setURI(newuri);
+    function setFuseBlockAddress(address _fuseBlockAddress) external onlyOwner {
+        fuseBlockAddress = _fuseBlockAddress;
     }
 
-    function _uriFromUUID(string memory _uuid) private view returns(string memory) {
-        string memory _tokenURI = string(abi.encodePacked(super.uri(1), "?id=", _uuid));
-        return _tokenURI;
+    function setItemAddress(address _itemAddress) external onlyOwner {
+        itemAddress = _itemAddress;
     }
 
-    function uri(uint256 _tokenId) public view virtual override returns (string memory) {
-        string memory firebaseID = items[_tokenId].itemUUID;
-        return _uriFromUUID(firebaseID);
+    function setStakeAddress(address _stakeAddress) external onlyOwner {
+        stakeAddress = _stakeAddress;
     }
 
-    function cancelItems(uint256 _fuseBlockId) external onlyFuseBlock {
-        //return back aura to fuseblock
-        FuseBlockInfo memory fuseBlockItem = fuseBlockItems[_fuseBlockId];
-        IERC20Upgradeable(auraAddress).transfer(tx.origin, fuseBlockItem.auraAmount);
-        _burnBatch(fuseBlockItem.receiver, fuseBlockItem.itemIds, fuseBlockItem.itemAmounts);
-    }
-
-    function mint(uint256 _fuseBlockId, address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyFuseBlock {
-        require(_quantity > 0, "invalid quantity");
-        require(_auraAmount > 0, "invalid aura amount");
-
-        uint256 tokenId = _tokenIdCounter.current();
-        _mint(_receiver, tokenId, _quantity, "");
-        _tokenIdCounter.increment();
-
-        FuseBlockInfo storage fuseBlockInfo = fuseBlockItems[_fuseBlockId];
-
-        fuseBlockInfo.auraAmount += _quantity * _auraAmount;
-        fuseBlockInfo.itemIds.push(tokenId);
-        fuseBlockInfo.itemAmounts.push(_quantity);
-        fuseBlockInfo.receiver = _receiver;
-        
-        items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount});
-        fuseBlockIds[tokenId] = _fuseBlockId;
-
-        emit Mint(_receiver, tokenId, _quantity, _itemUUID);
-    }
-
-    function updateAuraAddress(address _newAuraAddress) external onlyOwner {
-        auraAddress = _newAuraAddress;
-    }
-
-    function updateFuseBlockAddress(address _newFuseBlockAddress) external onlyOwner {
-        fuseBlockAddress = _newFuseBlockAddress;
-    }
-
-    function getAuraAmount(uint256 _tokenId) public view returns (uint256) {
-        return items[_tokenId].auraAmount;
-    }
-
-    function getItemsFromFuseBlock(uint256 _fuseBlockId) external view returns(FuseBlockInfo memory) {
-        return fuseBlockItems[_fuseBlockId];
-    }
-
-    function getItemsInfo(uint256[] calldata _ids) external view returns(ItemInfo[] memory) {
-        uint256 len = _ids.length;
-        ItemInfo[] memory _items = new ItemInfo[](len);
-
-        for (uint256 i = 0; i < len;) {
-            _items[i] =  items[_ids[i]];
-            unchecked {
-                ++i;
-            }
+    function _beforeTokenTransfer(address from, address to, uint256) internal override virtual {
+        if (from != address(0)
+            && from != fuseBlockAddress
+            && from != itemAddress
+            && to != fuseBlockAddress
+            && to != itemAddress
+            && from != owner()
+            && from != stakeAddress
+        ) {
+            revert("can't transfer");
         }
-
-        return _items;
-    }
-
-    function getFuseBlockIdFromItemId(uint256 _itemId) public view returns(uint256) {
-        return fuseBlockIds[_itemId];
-    }
-
-    /**
-     * @dev See {IERC1155-safeTransferFrom}.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) public virtual override {
-        if (getFuseBlockIdFromItemId(id) != 0) {
-            require(IFuseBlock(fuseBlockAddress).getRequirementStatus(getFuseBlockIdFromItemId(id)), "fuseblock requirement not mint");
-        }
-       
-        super.safeTransferFrom(from, to, id, amount, data);
-    }
-
-    function batchTransferFrom(TransferInfo[] memory transferInfo) public {
-        uint256 len = transferInfo.length;
-
-        for(uint256 i = 0; i < len; ) {
-            TransferInfo memory transfer = transferInfo[i];
-            unchecked {
-                safeTransferFrom(transfer.from, transfer.to, transfer.id, transfer.amount, '');
-                ++i;
-            }
-        }
-    }
-
-    function safeBatchTransferFrom(
-        address,
-        address,
-        uint256[] memory,
-        uint256[] memory,
-        bytes memory
-    ) public virtual override {
-        revert("batch transfer not availble");
-    }
-
-    function setRGNAddress(address _newAddress) public onlyOwner {
-        rgnAddress = _newAddress;
-    }
-
-    function isApprovedForAll(address account, address operator) public view virtual override returns (bool) {
-        if (operator == rgnAddress) {
-            return true;
-        } else {
-        return super.isApprovedForAll(account, operator);
-        }
-    }
-
-    function _infusedMint(address _infuser, string memory _itemUUID, uint256[] calldata _itemIds, bool _isBurn) private {
-        uint256 len = _itemIds.length;
-        require(len > 0, "invalid item count");
-        uint256 amount;
-        for (uint256 i = 0; i < len;) {
-            if (balanceOf(_infuser, _itemIds[i]) == 0) {
-                revert("not enough balance");
-            }
-            if (getAuraAmount(_itemIds[i]) != 0) {
-                amount += getAuraAmount(_itemIds[i]);
-                if (_isBurn) {
-                    removeItemFromFuseBlock(_infuser, _itemIds[i]);
-                }
-            } else {
-                revert("invalid item id");
-            }
-            unchecked {
-                ++i;
-            }
-        }
-
-        uint256 tokenId = _tokenIdCounter.current();
-        _mint(_infuser, tokenId, 1, "");
-        _tokenIdCounter.increment();
-
-        items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: amount});
-        emit InfusedMint(_infuser, tokenId, 1, _itemUUID, _isBurn);
-    }
-
-    function infusedMint(address _player, string memory _itemUUID, uint256[] calldata _itemIds, bool _isBurn) public onlyOwner{
-        _infusedMint(_player, _itemUUID, _itemIds, _isBurn);
-    }
-
-    function removeItemFromFuseBlock(address _from, uint256 _itemId) private {
-        _burn(_from, _itemId, 1);
-
-        uint256 fuseBlockId = getFuseBlockIdFromItemId(_itemId);  
-        if (fuseBlockId == 0) {
-            return;
-        }
-        FuseBlockInfo storage fuseBlockInfo = fuseBlockItems[fuseBlockId];
-
-        fuseBlockInfo.auraAmount -= getAuraAmount(_itemId);
-        uint256 len = fuseBlockInfo.itemIds.length;
-        for (uint256 i = 0; i < len;) {
-            if (fuseBlockInfo.itemIds[i] == _itemId) {
-                require(fuseBlockInfo.itemAmounts[i] >= 1, "item already destroyed");
-                fuseBlockInfo.itemAmounts[i] -= 1;
-                if (fuseBlockInfo.itemAmounts[i] == 0) {
-                    delete fuseBlockInfo.itemIds[i];
-                    delete items[_itemId];
-                } 
-            } 
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    function mintDirect(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyOwner{
-        _mintDirect(_receiver, _itemUUID, _quantity, _auraAmount, "");
-    }
-
-    function batchMintDirect(MintInfo[] memory mintInfo) public onlyOwner{
-        uint256 len = mintInfo.length;
-        uint256 auraAmount;
-
-        for(uint256 i = 0; i < len; ) {
-            MintInfo memory item = mintInfo[i];
-            unchecked {
-                uint256 tokenId = _tokenIdCounter.current();
-                _mint(item.receiver, tokenId, item.quantity, "");
-                _tokenIdCounter.increment();
-                auraAmount += item.auraAmount * item.quantity;
-
-                items[tokenId] = ItemInfo({itemUUID: item.itemUUID, auraAmount: item.auraAmount});
-                emit MintDirect(item.receiver, tokenId, item.quantity, item.itemUUID, '');
-                ++i;
-            }
-        }
-
-        IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), auraAmount);
-    }
-    
-
-    function mintDirectWithData(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount, string memory data) public onlyOwner{
-        _mintDirect(_receiver, _itemUUID, _quantity, _auraAmount, data);
-    }
-
-    function _mintDirect(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount, string memory data) private{
-        require(_auraAmount > 0, "invalid aura amount");
-
-        uint256 tokenId = _tokenIdCounter.current();
-        _mint(_receiver, tokenId, _quantity, "");
-        _tokenIdCounter.increment();
-
-        items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount});
-        IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount * _quantity);
-        emit MintDirect(_receiver, tokenId, _quantity, _itemUUID, data);
-    }
-
-    function infusedMintForPlayer(string memory _itemUUID, uint256[] calldata _itemIds, bool _isBurn) public {
-        _infusedMint(msg.sender, _itemUUID, _itemIds, _isBurn);
     }
 }

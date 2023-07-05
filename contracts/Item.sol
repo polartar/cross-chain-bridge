@@ -14,6 +14,13 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     event Mint(address indexed to, uint256 id, uint256 value, string uuid);
     event MintDirect(address indexed to, uint256 id, uint256 value, string uuid, string data);
     event InfusedMint(address indexed to, uint256 id, uint256 value, string uuid, bool isBurn);
+    
+    struct MintInfo {
+        address receiver;
+        string itemUUID;
+        uint256 quantity;
+        uint256 auraAmount;
+    }
     struct ItemInfo {
         string itemUUID;
         uint256 auraAmount;
@@ -253,6 +260,28 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     function mintDirect(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount) public onlyOwner{
         _mintDirect(_receiver, _itemUUID, _quantity, _auraAmount, "");
     }
+
+    function batchMintDirect(MintInfo[] memory mintInfo) public onlyOwner{
+        uint256 len = mintInfo.length;
+        uint256 auraAmount;
+
+        for(uint256 i = 0; i < len; ) {
+            MintInfo memory item = mintInfo[i];
+            unchecked {
+                uint256 tokenId = _tokenIdCounter.current();
+                _mint(item.receiver, tokenId, item.quantity, "");
+                _tokenIdCounter.increment();
+                auraAmount += item.auraAmount * item.quantity;
+
+                items[tokenId] = ItemInfo({itemUUID: item.itemUUID, auraAmount: item.auraAmount});
+                emit MintDirect(item.receiver, tokenId, item.quantity, item.itemUUID, '');
+                ++i;
+            }
+        }
+
+        IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), auraAmount);
+    }
+    
 
     function mintDirectWithData(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount, string memory data) public onlyOwner{
         _mintDirect(_receiver, _itemUUID, _quantity, _auraAmount, data);

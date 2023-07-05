@@ -2,15 +2,18 @@ const hre = require("hardhat");
 
 async function main() {
   const { upgrades } = hre;
+  const [deployer] = await ethers.getSigners();
+  const feeData = await deployer.provider.getFeeData();
   const { fuseBlockAddress, auraAddress } =
     hre.config.networks[hre.network.name];
 
   const Item = await hre.ethers.getContractFactory("Item");
-  const item = await upgrades.deployProxy(
-    Item,
-    [auraAddress, fuseBlockAddress],
+  const item = await Item.deploy(
+    auraAddress,
+    "0x4c6348bf16FeA56F3DE86553c0653b817bca799A",
     {
-      kind: "uups",
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+      maxFeePerGas: feeData.maxFeePerGas * 2,
     }
   );
 
