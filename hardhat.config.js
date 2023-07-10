@@ -104,13 +104,21 @@ module.exports = {
       itemAddress: "0x1FFC339cE1eF72F15eA7B0526a18abba74471b29",
       stakeAddress: "0x8F4A0948B4CC550efF8d10004719F88f8F3070DC",
     },
+    lightlink: {
+      url: `https://replicator-02.phoenix.lightlink.io/rpc/v1`,
+      accounts: [process.env.PRIVATE_KEY],
+      auraAddress: "",
+      itemAddress: "",
+    },
     satoshi: {
       accounts: [process.env.PRIVATE_KEY],
       url: `https://mainnet-rpc.satoshichain.io`,
+      auraAddress: "0xbDDCc0E86564B4A8Eb1df352CFb2B7629488Dd96",
+      item: "0x4c16D9032560600Db5Bd1211965a2982be7e0fEA",
     },
   },
   mocha: {
-    timeout: 1500000,
+    timeout: 200000,
   },
   etherscan: {
     apiKey: process.env.POLYGON_API_KEY,
