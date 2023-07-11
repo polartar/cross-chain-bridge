@@ -107,8 +107,8 @@ module.exports = {
     lightlink: {
       url: `https://replicator-02.phoenix.lightlink.io/rpc/v1`,
       accounts: [process.env.PRIVATE_KEY],
-      auraAddress: "",
-      itemAddress: "",
+      auraAddress: "0x2299C6B697D7D84F747cc9575412eAc022875E49",
+      itemAddress: "0x5e15276d7798ABbDFAFc9CB6730D581a12551947",
     },
     satoshi: {
       accounts: [process.env.PRIVATE_KEY],
