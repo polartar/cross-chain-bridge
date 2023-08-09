@@ -278,8 +278,10 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
                 ++i;
             }
         }
-
-        IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), auraAmount);
+        
+        if (auraAmount > 0) {
+            IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), auraAmount);
+        }
     }
     
 
@@ -288,14 +290,15 @@ contract Item is UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable{
     }
 
     function _mintDirect(address _receiver, string memory _itemUUID, uint256 _quantity, uint256 _auraAmount, string memory data) private{
-        require(_auraAmount > 0, "invalid aura amount");
-
         uint256 tokenId = _tokenIdCounter.current();
         _mint(_receiver, tokenId, _quantity, "");
         _tokenIdCounter.increment();
 
         items[tokenId] = ItemInfo({itemUUID: _itemUUID, auraAmount: _auraAmount});
-        IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount * _quantity);
+        
+        if (_auraAmount > 0) {
+            IERC20Upgradeable(auraAddress).transferFrom(msg.sender, address(this), _auraAmount * _quantity);
+        }
         emit MintDirect(_receiver, tokenId, _quantity, _itemUUID, data);
     }
 
